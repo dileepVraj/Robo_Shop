@@ -9,6 +9,8 @@ NORMAL="\e[0m"
 DATE_TIME=$(date +"%Y-%m-%d %H:%M:%S")
 LOG_FILE="/tmp/$0-$DATE_TIME.log"
 
+echo "Hello"
+
 echo "Script started executing at $DATE_TIME" &>> $LOG_FILE
 
 
