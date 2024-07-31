@@ -35,7 +35,7 @@ validate_user() {
 
 # Copying contents of mongo_repo file to /etc/yum.repos.d/ directory.
 
-cp /d/My_Projects/RoboShop/repo_files/mongodb_repo /etc/yum.repos.d/mongo.repo &&> $LOG_FILE
+cp /home/Robo_Shop/repo_files/mongodb_repo /etc/yum.repos.d/mongo.repo &&> $LOG_FILE
 
 validate_operation $? "Copied mongo_repo file to 'yum.repos.d' directory as mongo.repo"
 
