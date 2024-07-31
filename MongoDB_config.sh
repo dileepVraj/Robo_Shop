@@ -11,6 +11,6 @@ LOG_FILE="/tmp/$0-$DATE_TIME.log"
 
 echo "Hello"
 
-echo "Script started executing at+ $DATE_TIME &>> $LOG_FILE
+echo "Script started executing at"+ $DATE_TIME &>> $LOG_FILE
 
 
