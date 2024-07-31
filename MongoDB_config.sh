@@ -11,6 +11,6 @@ LOG_FILE=/tmp/mongodb.log
 
 echo "Hello"
 
-echo "Script started executed" &>> $LOG_FILE 
+echo "$GREEN Script started executed" &>> $LOG_FILE 
 
 
