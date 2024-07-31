@@ -7,10 +7,10 @@ YELLOW="\e[33m"
 NORMAL="\e[0m"
 
 DATE_TIME=$(date +"%Y-%m-%d %H:%M:%S")
-LOG_FILE="/tmp/$0-$DATE_TIME.log"
+LOG_FILE=/tmp/mongodb.log
 
 echo "Hello"
 
-echo "Script started executing at $DATE_TIME" &>> $LOG_FILE
+echo "Script started executed" &>> $LOG_FILE 
 
 
