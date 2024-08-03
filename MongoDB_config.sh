@@ -52,4 +52,4 @@ validate_operation $? "Successfully started MongoDB"
 
 # Modifying MongoDB default port to public port using 'sed'
 sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf &>> $LOG_FILE
-validate_operation $? "Successfully modified default port
+validate_operation $? "Successfully modified default port"
