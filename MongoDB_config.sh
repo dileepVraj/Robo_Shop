@@ -36,7 +36,7 @@ validate_user() {
 
 # Copying contents of mongo_repo file to /etc/yum.repos.d/ directory.
 
-cp /home/Robo_Shop/repo_files/mongodb_repo /etc/yum.repos.d/mongo.repo &&> $LOG_FILE
+cp /home/centos/Robo_Shop/repo_files/mongodb_repo /etc/yum.repos.d/mongo.repo &&> $LOG_FILE
 
 if [ $? -eq 0 ]; then
     echo -e "$GREEN Successfully copied 'mongodb_repo' file to 'yum.repos.d' directory $NORMAL" &>> $LOG_FILE
