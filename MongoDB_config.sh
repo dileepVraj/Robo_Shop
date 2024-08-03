@@ -20,6 +20,8 @@ validate_operation()
         echo " yeah $2 success"
     fi
 
+validate_user
+
 # Installing mongodb
 dnf install mongodb-org -y &>> $LOG_FILE
 
