@@ -15,7 +15,7 @@ validate_operation()
     if [ $1 -ne 0 ]; then
         echo "Sorry $2 failed"
     elif [ $1 -eq 0 ]; then
-        echo " yeah $2 success"
+        echo " yeah 👍 $2 success"
     fi
 
 # copy mongo.repo file to /etc/yum.repos.d/ 
