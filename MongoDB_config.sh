@@ -63,22 +63,22 @@ validate_operation $? "Mongo_DB installation"
 
 # enabling mongo_db service.
 systemctl enable mongod
-validate_operation() $? "Mongo_DB enabled successfully"
+validate_operation $? "Mongo_DB enabled successfully"
 
 # Starting mongo_db service
 systemctl start mongod
-validate_operation() $? "successfully started mongodb"
+validate_operation $? "successfully started mongodb"
 
 # Now we have to change mongodb default port to public port without manual intervention by using SED
 #.. editor(Stream Editor) where it can edit a text file by reading it in streams.
 
 sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongo.conf
 
-validate_operation() $? "Successfully modified default port to public port using 'sed' editor."
+validate_operation $? "Successfully modified default port to public port using 'sed' editor."
 
 systemctl restart mongod &>> $LOG_FILE
 
-validate_operation() $? "Mongo_db restarted successfully."
+validate_operation $? "Mongo_db restarted successfully."
 
 
 
