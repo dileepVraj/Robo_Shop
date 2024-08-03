@@ -3,8 +3,6 @@
 ID=$(id -u)
 LOG_FILE="/tmp/mongodb.log"
 
-# copy mongo.repo file to /etc/yum.repos.d/ 
-cp /home/centos/Robo_Shop/repo_files/mongodb_repo/ /etc/yum.repos.d/mongo.repo
 
 validate_user()
     if [ $ID -eq 0 ]; then
@@ -19,6 +17,10 @@ validate_operation()
     elif [ $1 -eq 0 ]; then
         echo " yeah $2 success"
     fi
+
+# copy mongo.repo file to /etc/yum.repos.d/ 
+cp /home/centos/Robo_Shop/repo_files/mongodb_repo /etc/yum.repos.d/mongo.repo
+
 
 validate_user
 
