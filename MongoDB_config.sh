@@ -79,29 +79,3 @@ validate_operation $? "Successfully modified default port to public port using '
 systemctl restart mongod &>> $LOG_FILE
 
 validate_operation $? "Mongo_db restarted successfully."
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
