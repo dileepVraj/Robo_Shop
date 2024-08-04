@@ -18,7 +18,7 @@ validate_operation()
         echo " yeah 👍 $2"
     fi
 
-add_user() {
+add_user() 
     if [ $1 -ne 0 ]; then
         echo "No user called '$2' exists."
         useradd $2
@@ -27,10 +27,10 @@ add_user() {
         echo "User '$2' is already exists."
     fi
 
-}
 
 
-createDirectory() {
+
+createDirectory() 
     # This function takes 2 arguments, 1.path to directory we want to check if it exists.
     # 2. if not the path we want to create a directory in, with directory name.
     if [ test -d $1 -eq 0 ]; then
@@ -41,7 +41,7 @@ createDirectory() {
         echo "directory $2 is created"
         cd $2
         echo "changed to directory $2"  
-}
+
 
 
 #Disabling default nodejs module.
