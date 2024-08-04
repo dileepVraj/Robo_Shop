@@ -4,21 +4,24 @@
 ID=$(id -u)
 LOG_FILE="/tmp/catalogue.log"
 
-validate_user()
+validate_user() {
     if [ $ID -eq 0 ]; then
         echo "you are root user, good to install services"
     else
         echo "only root users can install servies sorry 😒"
     fi
+}
 
-validate_operation()
+validate_operation() {
     if [ $1 -ne 0 ]; then
         echo "Sorry $2 failed"
     elif [ $1 -eq 0 ]; then
         echo " yeah 👍 $2"
     fi
+}
 
-add_user() 
+
+add_user() {
     if [ $1 -ne 0 ]; then
         echo "No user called '$2' exists."
         useradd $2
@@ -26,23 +29,34 @@ add_user()
     else
         echo "User '$2' is already exists."
     fi
+}
 
 
 
 
-createDirectory() 
+createDirectory() {
     # This function takes 2 arguments, 1.path to directory we want to check if it exists.
     # 2. if not the path we want to create a directory in, with directory name.
-    if [ test -d $1 -eq 0 ]; then
+    if [ -d $1  ]; then
         echo "directory $1 is available"
     else
         echo "directory $1 is not available"
-        mkdir $2
+        mkdir -p $2
         echo "directory $2 is created"
-        cd $2
-        echo "changed to directory $2"  
+        cd "$2" || exit
+        echo "changed to directory $2" 
+    fi
+}   
 
 
+
+
+
+
+
+
+
+validate_user
 
 #Disabling default nodejs module.
 dnf module disable nodejs -y
@@ -56,8 +70,8 @@ validate_operation $? "NodeJS 18 module is enabled."
 dnf install nodejs -y &>> $LOG_FILE
 
 #Capturing exit code in a variable after executing 'id <username> command which returns the exit code.'
-id roboshop
-IsUserExists=$($?)
+id roboshop &>/dev/null 
+IsUserExists=$?
 add_user $IsUserExists roboshop
 
 # Changing directory to root.
