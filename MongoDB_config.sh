@@ -46,5 +46,5 @@ validate_operation $? "port modification is"
 
 # restarting mongodb
 systemctl restart mongod
-validate_operation $? "mongo_DB restart is success"
+validate_operation $? "mongo_DB restart is"
 
