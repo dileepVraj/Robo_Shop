@@ -58,7 +58,7 @@ dnf install nodejs -y &>> $LOG_FILE
 #Capturing exit code in a variable after executing 'id <username> command which returns the exit code.'
 id roboshop
 IsUserExists=$($?)
-add_user $? roboshop
+add_user $IsUserExists roboshop
 
 # Changing directory to root.
 cd /
