@@ -46,15 +46,15 @@ createDirectory() {
 validateUser
 
 # Disabling nodejs default version.
-dnf module disable nodejs -y
+dnf module disable nodejs -y &>> $LOG_FILE
 validateOperation $? "Default Nodejs module disable"
 
 # Enabling nodejs version 18.
-dnf module enable nodejs:18 -y
+dnf module enable nodejs:18 -y &>> $LOG_FILE
 validateOperation $? "Enabling Nodejs:18"
 
 # Installing Nodejs
-dnf install nodejs -y
+dnf install nodejs -y &>> $LOG_FILE
 validateOperation $? "Nodejs Installation"
 
 # Create the user.
@@ -71,7 +71,7 @@ curl -L -o /tmp/cart.zip https://roboshop-builds.s3.amazonaws.com/cart.zip
 validateOperation $? "Application code downloading"
 
 # Unziping applicatino code.
-unzip -0 /tmp/cart.zip
+unzip -o /tmp/cart.zip
 validateOperation $? "Application code unzip in /app directory is:"
 
 # Installing node package manager.
