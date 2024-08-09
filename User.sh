@@ -19,7 +19,7 @@ validateOperation() {
     echo "Operation $2 is successfull"
     else
         echo "Operation $2 is falied"
-        exit 1 
+       
 }
 
 addUser() {
