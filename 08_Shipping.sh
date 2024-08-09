@@ -88,7 +88,7 @@ validateOperation $? "Renamed shipping-1.0 to shipping.jar"
 #--------------------------------------------
 
 # Copying shipping_servie to /tmp/systemd/system directory
-cp /home/Robo_Shop/service_files/Shipping_service /tmp/systemd/system/shipping.service
+cp /home/Robo_Shop/service_files/Shipping_service /etc/systemd/system/shipping.service
 validateOperation $? "creating shipping.service file"
 
 # Daemon-reload
