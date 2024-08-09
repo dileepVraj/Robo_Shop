@@ -47,7 +47,7 @@ createDirectory(){
 validate_user()
 
 # Installing Redis repo file as RPM.
-dnf install https://rpms.remirepo.net/enterprise/remi-release-8.rpm -y &>> $LOG_FILE
+dnf install https://rpms.remirepo.net/enterprise/remi-release-8.rpm -y &>> "$LOG_FILE"
 validateOperation $? "Redis repo file downloaded"
 
 # Enabling Redis 6.2 from package streams.
