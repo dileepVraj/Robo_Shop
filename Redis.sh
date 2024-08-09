@@ -68,4 +68,5 @@ systemctl enable redis
 validateOperation $? "Redis enabling"
 
 # Starting redis
-systemctl start redis $? "Redis start"
+systemctl start redis 
+validateOperation $? "Redis start"
