@@ -72,6 +72,12 @@ validateOperation $? "user roboshop added"
 createDirectory "/app"
 
 # Download the application code to '/tmp' directory.
+
+# Explanation:
+# The '-L' option is used to tell the 'curl' to follow any redirects that might occour.
+# The '-o' option specifies the output file. The '-o' option is followed by the path where you
+# ..want to save the downloaded file.
+
 curl -L -o /tmp/user.zip https://roboshop-builds.s3.amazonaws.com/user.zip
 validateOperation $? "successfully downloaded application code"
 
@@ -80,6 +86,10 @@ cd /app
 validateOperation $? "changed to '/app' directory"
 
 # Unzipping downaloaded application code.
+# The '-o' option tells 'unzip' to overwrite any existing files without prompting you for confirmation.
+# If file extracted from '.zip' archive exists already in the target directory, they will be automatically
+# ...replaced with the files from the archive.
+
 unzip -o /tmp/user.zip
 validateOperation $? "Unziped 'user.zip'"
 
@@ -87,7 +97,7 @@ validateOperation $? "Unziped 'user.zip'"
 npm install &>> $LOG_FILE
 validateOperation $? "Installed node package manager"
 
-# We need to setup a new service in systemd so systemctl can manage this service
+# We need to setup a new service in 'systemd' so systemctl can manage this service.
 cp /home/Robo_Shop/service_files/User_service /etc/systemd/system/user.service
 validateOperation $? "user_service copied successfully to /etc/systemd/system"
 
@@ -104,15 +114,16 @@ systemctl start user
 validateOperation $? "user start"
 
 # Copying mongo.repo to /etc/yum.repos.d/ directory.
-cp /home/centos/Robo_Shop/repo_files/mongodb_repo /etc/yum.repos.d/mongo.repo
+cp /home/Robo_Shop/repo_files/mongodb_repo /etc/yum.repos.d/mongo.repo
 validateOperation $? "mongo.repo file created"
 
 # Installing mongodb-shell
-dnf install mongodb-shell -y
+dnf install mongodb-org-shell -y
 validateOperation $? "Mongodb-shell installation"
 
 # Loading schema to mongodb
-mongo --host 
+mongo --host 172.31.43.112 </app/schema/user.js
+validateOperation $? "loading schema to Mongo_db is "
 
 
 
