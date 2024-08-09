@@ -69,4 +69,4 @@ validateOperation $? "Redis enabling"
 
 # Starting redis
 systemctl start redis 
-validateOperation $? "Redis start"
+validateOperation $? "Redis_start"
