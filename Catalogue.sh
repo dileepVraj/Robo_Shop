@@ -112,7 +112,7 @@ npm install &>> $LOG_FILE
 validate_operation $? "npm installed"
 
 # adding catalogue.service file in /etc/systemd/system/ directory.
-cp /home/centos/Robo_Shop/service_files/Catalogue_service /etc/systemd/system/catalogue.service
+cp /home/Robo_Shop/service_files/Catalogue_service /etc/systemd/system/catalogue.service
 validate_operation $? "catalogue.service is created"
 
 # Restarting the system daemon.
