@@ -63,6 +63,9 @@ addUser "roboshop"
 # Create app directory.
 createDirectory "/app"
 
+# Change to /app directory
+cd /app
+
 # Downloading the applicatio code.
 curl -L -o /tmp/cart.zip https://roboshop-builds.s3.amazonaws.com/cart.zip
 validateOperation $? "Application code downloading"
