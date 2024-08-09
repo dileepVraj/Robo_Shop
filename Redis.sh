@@ -45,7 +45,7 @@ createDirectory(){
 }
 
 # validating user
-validateUser()
+validateUser
 
 # Installing Redis repo file as RPM.
 dnf install https://rpms.remirepo.net/enterprise/remi-release-8.rpm -y &>> "$LOG_FILE"
