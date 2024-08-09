@@ -88,6 +88,35 @@ npm install &>> $LOG_FILE
 validateOperation $? "Installed node package manager"
 
 # We need to setup a new service in systemd so systemctl can manage this service
+cp /home/Robo_Shop/service_files/User_service /etc/systemd/system/user.service
+validateOperation $? "user_service copied successfully to /etc/systemd/system"
+
+# Reloading daemon.
+systemctl daemon-reload
+validateOperation $? "daemon-reload is"
+
+# enabling user.service
+systemctl enable user
+validateOperation $? "user enabled"
+
+# starting user.service
+systemctl start user
+validateOperation $? "user start"
+
+# Copying mongo.repo to /etc/yum.repos.d/ directory.
+cp /home/centos/Robo_Shop/repo_files/mongodb_repo /etc/yum.repos.d/mongo.repo
+validateOperation $? "mongo.repo file created"
+
+# Installing mongodb-shell
+dnf install mongodb-shell -y
+validateOperation $? "Mongodb-shell installation"
+
+# Loading schema to mongodb
+mongo --host 
+
+
+
+
 
 
 
