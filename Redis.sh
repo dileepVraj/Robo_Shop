@@ -16,6 +16,7 @@ validateUser() {
 validateOperation() {
     if [ $1 -ne 0 ];then
     echo "Operation $2 failed."
+    exit 1
     else 
         echo "Operation $2 success."
     fi
@@ -44,7 +45,7 @@ createDirectory(){
 }
 
 # validating user
-validate_user()
+validateUser()
 
 # Installing Redis repo file as RPM.
 dnf install https://rpms.remirepo.net/enterprise/remi-release-8.rpm -y &>> "$LOG_FILE"
