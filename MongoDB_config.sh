@@ -19,7 +19,9 @@ validate_operation()
     fi
 
 # copy mongo.repo file to /etc/yum.repos.d/ 
-cp /home/centos/Robo_Shop/repo_files/mongodb_repo /etc/yum.repos.d/mongo.repo
+cp /home/Robo_Shop/repo_files/mongodb_repo  /etc/yum.repos.d/mongo.repo
+
+
 
 
 validate_user
@@ -38,6 +40,8 @@ validate_operation $? "Mongo_DB enableing is"
 systemctl start mongod
 
 validate_operation $? "Mongo_DB started"
+
+
 
 # modify the port number of mongod
 sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
