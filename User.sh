@@ -16,10 +16,10 @@ validateUser() {
 
 validateOperation() {
     if [ $1 -eq 0 ]; then
-    echo "Operation $2 is successfull"
+    echo "Operation '$2' is successfull"
     else
-        echo "Operation $2 is falied"
-       
+        echo "Operation '$2' is falied"
+           
 }
 
 addUser() {
