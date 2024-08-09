@@ -126,7 +126,7 @@ systemctl start catalogue
 validate_operation $? "Catalogue started"
 
 # creating mongo.repo file in /etc/yum.repos.d/ directory.
-cp /home/centos/Robo_Shop/repo_files/mongodb_repo /etc/yum.repos.d/mongo.repo
+cp /home/Robo_Shop/repo_files/mongodb_repo /etc/yum.repos.d/mongo.repo
 validate_operation $? "mongo.repo file created"
 
 # Installing mongodb shell(client)
