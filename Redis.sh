@@ -60,7 +60,7 @@ dnf install redis -y &>> $LOG_FILE
 validateOperation $? "Redis installation"
 
 # Updating the listning address from '127.0.0.1' to 0.0.0.0 in /etc/redis.conf /etc/redis/redis.conf
-sed -i 's/127.0.0.1/0.0.0.0/g' /etc/redis.conf
+sed -i 's/127.0.0.1/0.0.0.0/g' /etc/redis/redis.conf
 validateOperation $? "Bind address 127.0.0.1 is changed to 0.0.0.0"
 
 # Enabling redis
