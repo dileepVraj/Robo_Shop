@@ -134,5 +134,5 @@ dnf install mongodb-org-shell -y &>> $LOG_FILE
 validate_operation $? "Mongo_DB client installed successfully"
 
 # Loading schema to mongodb from catalogue 'ms' 
-mongo --host 172.31.35.111 </app/schema/catalogue.js
+mongo --host 172.31.45.7 </app/schema/catalogue.js
 validate_operation $? "Successfully loaded catalogue schema to mongo_db"

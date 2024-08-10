@@ -113,7 +113,7 @@ dnf install mysql -y
 validateOperation $? "Mysql client install"
 
 # Loading shipping schema to mysql database.
-mysql -h 172.31.36.22 -uroot -pRoboShop@1 < /app/schema/shipping.sql
+mysql -h 172.31.46.242 -uroot -pRoboShop@1 < /app/schema/shipping.sql
 validateOperation $? "Successfully loaded schema to MySql database"
 
 # Restarting shipping.service
