@@ -33,7 +33,7 @@ validateOperation $? "Enabled RabittMq"
 
 
 # Starting RabittMq service.
-systemctl start rabittmq-server
+systemctl start rabitmq-server
 validateOperation $? "Started RabittMq"
 
 #--------------------------------------------------------------
