@@ -13,9 +13,9 @@ LOG_FILE="/tmp/nginx.log"
 
 validateOperation() {
     if [ $1 -eq 0 ];then
-    echo "$1 is success"
+    echo "$2 is success"
     else
-        echo "$1 is failed"
+        echo "$2 is failed"
     fi
 }
 
@@ -39,6 +39,10 @@ validateOperation $? "Removing default content"
 curl -L -o /tmp/web.zip https://roboshop-builds.s3.amazonaws.com/web.zip
 validateOperation $? "Downloading front code"
 
+# Change directory to /usr/share/nginx/html
+cd /usr/share/nginx/html
+validateOperation $? "Changing directory to /usr/share/nginx/html is"
+
 # Extract the front end coce
 unzip -o /tmp/web.zip
 validateOperation $? "Extracting front end code"
@@ -46,6 +50,9 @@ validateOperation $? "Extracting front end code"
 # Adding reverse proxy to '/etc/nginx/default.d' directory.
 cp /home/Robo_Shop/service_files/NginxProxyConfig /etc/nginx/default.d/roboshop.conf
 validateOperation $? "Copying of nginx proxy file"
+
+
+
 
 # Restarting Nginx.
 systemctl restart nginx
