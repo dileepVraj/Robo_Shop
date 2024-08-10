@@ -23,8 +23,8 @@ validate_operation() {
 
 add_user() {
     # This function takes one positional parameter(username).
-    # The 'id $1(positional parameter 1) returns response of user details if present, if not an error
-    # response along with the exit status 0 if pass not a 0 if fail.'
+    # The 'id $1(positional parameter 1) returns response of user details if present, if not an error...
+    # ..response along with the exit status.'
 
     # If 'id $1' fails the error response is supress to /dev/null directory where it will deleted input
     # automatically.
