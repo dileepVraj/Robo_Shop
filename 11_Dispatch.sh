@@ -32,6 +32,7 @@ createDirectory() {
         echo "Directory '$1' is not availalbe."
         mkdir -p "$1"
         echo "Directory '$1' created successfully."
+    fi
 }
 
 # Installing Go lang.
