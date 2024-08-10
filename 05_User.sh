@@ -123,7 +123,7 @@ dnf install mongodb-org-shell -y
 validateOperation $? "Mongodb-shell installation"
 
 # Loading schema to mongodb
-mongo --host 172.31.43.112 </app/schema/user.js
+mongo --host 172.31.45.7 </app/schema/user.js
 validateOperation $? "loading schema to Mongo_db is "
 
 
