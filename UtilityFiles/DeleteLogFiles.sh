@@ -61,11 +61,10 @@ verifyDirExistance
 
         # The above command lists .log files that are older than specified time.
 
-FilesToDelete=""
 
 # This function takes 3 arguments (path to directory where files are listed, time(date) and file type)
 listFilesToDelete() {
-    $FilesToDelete=$(find $1 -type f -mtime +"$2" -name "*.$3")
+    FilesToDelete=$(find $1 -type f -mtime +"$2" -name "*.$3")
 }
 
 listFilesToDelete "/home/shell" "10" "log"
