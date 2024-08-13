@@ -75,7 +75,7 @@ listFilesToDelete "/home/shell" "10" "log"
 
     # If we embedd them in double quotes each file will be listed in seperate line.
 
-echo "$FilesToDelete"
+# echo "$FilesToDelete"
 
 deleteFiles() {
     if [ -z $1 ]; then
