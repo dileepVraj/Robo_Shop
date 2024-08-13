@@ -33,6 +33,7 @@ createFiles() {
 
 }
 
+verifyDirExistance
 createFiles "202407301420" "sample.log"
 createFiles "202407301420" "sample1.log"
 createFiles "202407301420" "sample2.txt"
@@ -54,7 +55,7 @@ createFiles "202407301420" "sample3.txt"
     # Command: find /home/shell -type f -mmin +N
     # Example: find /home/shell -type f -mmin +60
 
-    
+
 
 
 
