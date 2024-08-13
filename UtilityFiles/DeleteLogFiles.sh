@@ -35,10 +35,10 @@ createFiles() {
 }
 
 verifyDirExistance
-createFiles "202407301420" "sample.log"
-createFiles "202407301420" "sample1.log"
-createFiles "202407301420" "sample2.txt"
-createFiles "202407301420" "sample3.txt"
+# createFiles "202407301420" "sample.log"
+# createFiles "202407301420" "sample1.log"
+# createFiles "202407301420" "sample2.txt"
+# createFiles "202407301420" "sample3.txt"
 
 # Now we need to find files which are older than user specified time or date.
 
@@ -67,6 +67,8 @@ FilesToDelete=""
 listFilesToDelete() {
     $FilesToDelete=$(find $1 -type f -mtime +$2 -name "*.$3")
 }
+
+listFilesToDelete
 
 echo $FilesToDelete
 
