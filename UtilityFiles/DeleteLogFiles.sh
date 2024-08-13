@@ -69,7 +69,27 @@ listFilesToDelete() {
 
 listFilesToDelete "/home/shell" "10" "log"
 
+# Note:
+    # If we echo variable which contains multiple files without embedding it in double quotes all files in...
+    #.. the variable will be listed in same line with spaces in between.
+
+    # If we embedd them in double quotes each file will be listed in seperate line.
+
 echo "$FilesToDelete"
+
+deleteFiles() {
+    if [ -z $1 ]; then
+    echo "usage: $0"
+    exit 1
+    fi
+
+    while IFS= read -r files
+    do
+        echo "$files"
+    done < $1
+}
+
+deleteFiles $FilesToDelete
 
 
 
