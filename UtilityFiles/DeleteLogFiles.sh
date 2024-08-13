@@ -69,7 +69,7 @@ listFilesToDelete() {
 
 listFilesToDelete "/home/shell" "10" "log"
 
-echo $FilesToDelete
+echo "$FilesToDelete"
 
 
 
