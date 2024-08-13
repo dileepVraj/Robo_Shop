@@ -19,6 +19,7 @@ verifyDirExistance() {
 
 # Let's create different types of files in '/tmp/shellScript_logs' directory.
     # Let's create some files with previous date time stamp.
+    # We can create files without time using '-d' opiton in YYYYMMDD format.
 
 # This function takes two arguments(timestamp and file name.)
 createFiles() {
@@ -39,10 +40,10 @@ createFiles "202407301420" "sample1.log"
 createFiles "202407301420" "sample2.txt"
 createFiles "202407301420" "sample3.txt"
 
-# Now we need to find files which are older than user specified time.
+# Now we need to find files which are older than user specified time or date.
 
-    # We can use 'find' command to locate files that are older than a specific time.
-    # Syntax: 'find /path/to/directory -type f -mtime +N'
+    # We can use 'find' command to locate files that are older than a specific time or date.
+    # Syntax: 'find /path/to/directory -type f -mtime +N' 
 
     # Breakdown: '/path/to/directory' The directory where we want to serach for files.
     # '-type f': Restricts the search to files (not directories)
@@ -54,6 +55,20 @@ createFiles "202407301420" "sample3.txt"
     #** To find files older than a specific Number of Minutes.
     # Command: find /home/shell -type f -mmin +N
     # Example: find /home/shell -type f -mmin +60
+
+    # If we want to filter files using extension then we can use below command.
+        # find <path to directory> -type -f -mtime +N -name "*.log"
+
+        # The above command lists .log files that are older than specified time.
+
+FilesToDelete=""
+
+# This function takes 3 arguments (path to directory where files are listed, time(date) and file type)
+listFilesToDelete() {
+    $FilesToDelete=$(find $1 -type f -mtime +$2 -name "*.$3")
+}
+
+echo $FilesToDelete
 
 
 
