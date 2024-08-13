@@ -89,7 +89,7 @@ deleteFiles() {
     done < $1
 }
 
-deleteFiles $FilesToDelete
+deleteFiles "$FilesToDelete"
 
 
 
