@@ -78,18 +78,18 @@ listFilesToDelete "/home/shell" "10" "log"
 # echo "$FilesToDelete"
 
 deleteFiles() {
-    if [ -z $1 ]; then
-    echo "usage: $0"
-    exit 1
+    if [ -z $FilesToDelete ]; then
+        echo "usage: $0"
+        exit 1
     fi
 
     while IFS= read -r files
     do
         echo "$files"
-    done < $1
+    done < $FilesToDelete
 }
 
-deleteFiles "$FilesToDelete"
+deleteFiles 
 
 
 
