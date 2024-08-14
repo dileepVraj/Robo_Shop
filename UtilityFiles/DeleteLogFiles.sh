@@ -1,4 +1,4 @@
-#!/bin/bhas
+#!/bin/bash
 
 # Algorithm.
 
