@@ -117,7 +117,7 @@ deleteFiles() {
     done < $1
 }
 
-deleteFiles "/home/shell/"
+deleteFiles "/home/shell/sample_lines"
 
 
 
