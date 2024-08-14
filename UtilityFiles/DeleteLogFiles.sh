@@ -117,7 +117,7 @@ deleteFiles() {
     done < $1
 }
 
-deleteFiles "/home/Robo_Shop/UtilityFiles/DeleteLogFiles.sh"
+deleteFiles "/home/shell/"
 
 
 
