@@ -78,18 +78,47 @@ listFilesToDelete "/home/shell" "10" "log"
 # echo "$FilesToDelete"
 
 deleteFiles() {
-    if [ -z $FilesToDelete ]; then
+    # '-z' is a test operator that checks if the string is null(i.e has a length of 0).
+    # In this case it checks '$1' is an empty string, meaning no argument is provided.
+
+    # Purpose:
+        # To ensuse that the script is given a file name to work with. If no argument is given then
+        #.. the script should not continue, as it wouldn't know which file to process.
+    
+
+    if [ -z $1 ]; then
+        # This below line prints a usage message to the terminal.
+        # '$0' represents the name of the script itself.If the script is called 'readfile.sh', then
+        #.. '$0' would be 'readfile.sh'.
+
+        # Purpose:
+            # Provides the user with guidance on how to correctly run the script.
+                # If they forget to pass the filename, this message reminds them of the correct usage.
+
         echo "usage: $0"
+        # This command terminates the script and returns an exit status of 1 to the shell.
         exit 1
     fi
 
+    # 'IFS': Stands for Internal Field Separator.It is a special shell variable that defines the characters used to separate words.
+        # IFS=: Setting IFS= to an empty value temporarily disables word splitting.
+        # This means that the read command will not split lines into multiple fields based on whitespace or other characters.
+            # Purpose: Ensures that the entire line is read as a single unit, including any leading or trailing spaces.
+            # ---------------------------------------------------------------------------------------------------
+            # read: A built-in command used to read input from a file or standard input (stdin).
+            # -r: Tells read to treat backslashes literally (i.e., not as escape characters). This prevents read from interpreting sequences like \n as newlines.
+            # line: The variable line will hold the content of each line read from the file.
+                # Purpose: This reads each line of the file into the line variable, handling spaces and backslashes correctly.
     while IFS= read -r files
     do
         echo "$files"
-    done < $FilesToDelete
+        # < "$filename": Redirects the contents of the file named filename to the while loop.
+        # This means that the read command inside the loop reads from the file rather than from standard input.
+    done < $1
 }
 
-deleteFiles 
+deleteFiles "/home/Robo_Shop/UtilityFiles/DeleteLogFiles.sh"
+
 
 
 
