@@ -116,10 +116,10 @@ deleteFiles() {
         echo "$files"
         # < "$filename": Redirects the contents of the file named filename to the while loop.
         # This means that the read command inside the loop reads from the file rather than from standard input.
-    done < $FilesToDelete
+    done < "$FilesToDelete"
 }
 
-# deleteFiles "$FilesToDelete"
+deleteFiles "$FilesToDelete"
 
 
 
