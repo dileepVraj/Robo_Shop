@@ -77,7 +77,7 @@ listFilesToDelete "/home/shell" "10" "log"
 
     # If we embedd them in double quotes each file will be listed in seperate line.
 
-echo "$FilesToDelete"
+echo $FilesToDelete
 
 deleteFiles() {
     # '-z' is a test operator that checks if the string is null(i.e has a length of 0).
