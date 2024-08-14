@@ -61,7 +61,9 @@ verifyDirExistance
 
         # The above command lists .log files that are older than specified time.
 
-
+# Purpose:
+    # This function finds the files in a directory based on given time(date) and type by user(user input) and store those
+    #..files in a variable.
 # This function takes 3 arguments (path to directory where files are listed, time(date) and file type)
 listFilesToDelete() {
     FilesToDelete=$(find $1 -type f -mtime +"$2" -name "*.$3")
@@ -75,7 +77,7 @@ listFilesToDelete "/home/shell" "10" "log"
 
     # If we embedd them in double quotes each file will be listed in seperate line.
 
-# echo "$FilesToDelete"
+echo "$FilesToDelete"
 
 deleteFiles() {
     # '-z' is a test operator that checks if the string is null(i.e has a length of 0).
@@ -117,7 +119,7 @@ deleteFiles() {
     done < $FilesToDelete
 }
 
-deleteFiles "$FilesToDelete"
+# deleteFiles "$FilesToDelete"
 
 
 
