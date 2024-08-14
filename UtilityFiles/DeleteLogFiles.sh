@@ -86,7 +86,7 @@ deleteFiles() {
         #.. the script should not continue, as it wouldn't know which file to process.
     
 
-    if [ -z $FilesToDelete ]; then
+    if [ -z "$FilesToDelete" ]; then
         # This below line prints a usage message to the terminal.
         # '$0' represents the name of the script itself.If the script is called 'readfile.sh', then
         #.. '$0' would be 'readfile.sh'.
@@ -117,7 +117,7 @@ deleteFiles() {
     done < $FilesToDelete
 }
 
-deleteFiles $FilesToDelete
+deleteFiles "$FilesToDelete"
 
 
 
