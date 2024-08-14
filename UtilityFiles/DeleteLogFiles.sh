@@ -86,7 +86,7 @@ deleteFiles() {
         #.. the script should not continue, as it wouldn't know which file to process.
     
 
-    if [ -z $listFilesToDelete ]; then
+    if [ -z $FilesToDelete ]; then
         # This below line prints a usage message to the terminal.
         # '$0' represents the name of the script itself.If the script is called 'readfile.sh', then
         #.. '$0' would be 'readfile.sh'.
@@ -114,10 +114,10 @@ deleteFiles() {
         echo "$files"
         # < "$filename": Redirects the contents of the file named filename to the while loop.
         # This means that the read command inside the loop reads from the file rather than from standard input.
-    done < $listFilesToDelete
+    done < $FilesToDelete
 }
 
-deleteFiles $listFilesToDelete
+deleteFiles $FilesToDelete
 
 
 
