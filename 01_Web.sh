@@ -12,7 +12,7 @@ LOG_FILE="/tmp/nginx.log"
 #---------------------------------------------------------------------------------------
 
 validateOperation() {
-    if [ $1 -eq 0 ];then
+    if [ "$1" -eq 0 ];then
     echo "$2 is success"
     else
         echo "$2 is failed"
@@ -20,7 +20,7 @@ validateOperation() {
 }
 
 # Installing nginx.
-dnf install nginx -y &>> $LOG_FILE
+apt install nginx -y &>> $LOG_FILE
 validateOperation $? "Nginx installation"
 
 # Enable nginx.
@@ -40,15 +40,15 @@ curl -L -o /tmp/web.zip https://roboshop-builds.s3.amazonaws.com/web.zip
 validateOperation $? "Downloading front code"
 
 # Change directory to /usr/share/nginx/html
-cd /usr/share/nginx/html
+cd /usr/share/nginx/html || exit
 validateOperation $? "Changing directory to /usr/share/nginx/html is"
 
-# Extract the front end coce
+# Extract web.zip file.
 unzip -o /tmp/web.zip
 validateOperation $? "Extracting front end code"
 
-# Adding reverse proxy to '/etc/nginx/default.d' directory.
-cp /home/Robo_Shop/service_files/NginxProxyConfig /etc/nginx/default.d/roboshop.conf
+# Adding reverse proxy to '/etc/nginx/sites-enabled' directory.
+cp /home/Robo_Shop/service_files/NginxProxyConfig /etc/nginx/sites-enabled/roboshop.conf
 validateOperation $? "Copying of nginx proxy file"
 
 
