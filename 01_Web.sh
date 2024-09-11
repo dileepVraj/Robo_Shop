@@ -76,6 +76,8 @@ settingUpReverseProxy(){
     # Adding reverse proxy to '/etc/nginx/sites-enabled' directory.
     cp /home/Robo_Shop/service_files/NginxProxyConfig /etc/nginx/sites-enabled/roboshop.conf
     validateOperation $? "Copying of nginx proxy file"
+    rm -r /etc/nginx/sites-enabled/default
+    
 
 
 }
