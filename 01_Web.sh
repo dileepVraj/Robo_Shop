@@ -64,7 +64,7 @@ unzip_frontEndCode(){
 
     else
         echo " Unzip utility already installed"
-        unzip -o -q /tmp/web.zip
+        unzip -oq /tmp/web.zip
         validateOperation $? "Extracting front end code"
     fi
 
