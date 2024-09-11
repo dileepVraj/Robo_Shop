@@ -20,20 +20,20 @@ validateOperation() {
 }
 
 install_Nginx(){
-    if [ $(which nginx) -eq 0 ]; then
-    ehco " Nginx is already installed"
+    if ! command -v nginx &> /dev/null; then
+    ehco " Nginx isn't installed."
+    apt install nginx -y &>> $LOG_FILE
+    validateOperation $? "Nginx installation"
+    # Enable nginx.
+    systemctl enable nginx
+    validateOperation $? "Enabling Nginx"
+
+    # Starting nginx.
+    systemctl start nginx
+    validateOperation $? "Nginx Start"
+
     else
-        echo " Installing Nginx "
-        apt install nginx -y &>> $LOG_FILE
-        validateOperation $? "Nginx installation"
-
-        # Enable nginx.
-        systemctl enable nginx
-        validateOperation $? "Enabling Nginx"
-
-        # Starting nginx.
-        systemctl start nginx
-        validateOperation $? "Nginx Start"
+        echo " Nginx already installed. "
     fi
 
 }
