@@ -19,8 +19,7 @@ validateOperation() {
     fi
 }
 
-install_Nginx()
-{
+install_Nginx(){
     if [ $(which nginx) -eq 0 ]; then
     ehco " Nginx is already installed"
     else
@@ -39,15 +38,13 @@ install_Nginx()
 
 }
 
-remove_default_nginx_files()
-{
+remove_default_nginx_files(){
     # Removing the default content(welcome code) that web-server(nginx) is serving.
     rm -rf /usr/share/nginx/html/*
     validateOperation $? "Removing default content"
 }
 
-download_frontEndCode()
-{
+download_frontEndCode(){
 
     # Downloading front end contend(html).
     curl -L -o /tmp/web.zip https://roboshop-builds.s3.amazonaws.com/web.zip
@@ -59,8 +56,7 @@ download_frontEndCode()
 
 }
 
-unzip_frontEndCode()
-{
+unzip_frontEndCode(){
     if [ $(which unzip) -ne 0 ]; then
     echo " Unzip utility isn't installed yet."
     apt install unzip -y
@@ -75,14 +71,28 @@ unzip_frontEndCode()
 
 }
 
-
-# Adding reverse proxy to '/etc/nginx/sites-enabled' directory.
-cp /home/Robo_Shop/service_files/NginxProxyConfig /etc/nginx/sites-enabled/roboshop.conf
-validateOperation $? "Copying of nginx proxy file"
-
-
+settingUpReverseProxy(){
+    # Adding reverse proxy to '/etc/nginx/sites-enabled' directory.
+    cp /home/Robo_Shop/service_files/NginxProxyConfig /etc/nginx/sites-enabled/roboshop.conf
+    validateOperation $? "Copying of nginx proxy file"
 
 
-# Restarting Nginx.
-systemctl restart nginx
-validateOperation $? "Restarting Nginx"
+}
+
+restartNginx(){
+    # Restarting Nginx.
+    systemctl restart nginx
+    validateOperation $? "Restarting Nginx"
+}
+
+install_Nginx
+remove_default_nginx_files
+download_frontEndCode
+unzip_frontEndCode
+settingUpReverseProxy
+restartNginx
+
+
+
+
+
