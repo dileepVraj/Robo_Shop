@@ -57,16 +57,17 @@ download_frontEndCode(){
 }
 
 unzip_frontEndCode(){
-    if [ $(which unzip) -ne 0 ]; then
-    echo " Unzip utility isn't installed yet."
-    apt install unzip -y
-    validateOperation $? "unzip utility installation"
-
+    if ! command -v unzip &> /dev/null; then
+        echo "Unzip utility isn't installed yet."
+        sudo apt install unzip -y
+        validateOperation $? "unzip utility installation"
     else
-        echo " Unzip utility already installed"
+        echo "Unzip utility already installed"
         unzip -oq /tmp/web.zip
         validateOperation $? "Extracting front end code"
     fi
+}
+
 
 
 }
