@@ -70,7 +70,7 @@ unzip_frontEndCode(){
 
 
 
-}
+
 
 settingUpReverseProxy(){
     # Adding reverse proxy to '/etc/nginx/sites-enabled' directory.
