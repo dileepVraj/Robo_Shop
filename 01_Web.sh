@@ -19,33 +19,62 @@ validateOperation() {
     fi
 }
 
-# Installing nginx.
-apt install nginx -y &>> $LOG_FILE
-validateOperation $? "Nginx installation"
+install_Nginx()
+{
+    if [ $(which nginx) -eq 0 ]; then
+    ehco " Nginx is already installed"
+    else
+        echo " Installing Nginx "
+        apt install nginx -y &>> $LOG_FILE
+        validateOperation $? "Nginx installation"
 
-# Enable nginx.
-systemctl enable nginx
-validateOperation $? "Enabling Nginx"
+        # Enable nginx.
+        systemctl enable nginx
+        validateOperation $? "Enabling Nginx"
 
-# Starting nginx.
-systemctl start nginx
-validateOperation $? "Nginx Start"
+        # Starting nginx.
+        systemctl start nginx
+        validateOperation $? "Nginx Start"
+    fi
 
-# Removing the default content(welcome code) that web-server(nginx) is serving.
-rm -rf /usr/share/nginx/html/*
-validateOperation $? "Removing default content"
+}
 
-# Downloading front end contend(html).
-curl -L -o /tmp/web.zip https://roboshop-builds.s3.amazonaws.com/web.zip
-validateOperation $? "Downloading front code"
+remove_default_nginx_files()
+{
+    # Removing the default content(welcome code) that web-server(nginx) is serving.
+    rm -rf /usr/share/nginx/html/*
+    validateOperation $? "Removing default content"
+}
 
-# Change directory to /usr/share/nginx/html
-cd /usr/share/nginx/html || exit
-validateOperation $? "Changing directory to /usr/share/nginx/html is"
+download_frontEndCode()
+{
 
-# Extract web.zip file.
-unzip -o /tmp/web.zip
-validateOperation $? "Extracting front end code"
+    # Downloading front end contend(html).
+    curl -L -o /tmp/web.zip https://roboshop-builds.s3.amazonaws.com/web.zip
+    validateOperation $? "Downloading front code"
+
+    # Change directory to /usr/share/nginx/html
+    cd /usr/share/nginx/html || exit
+    validateOperation $? "Changing directory to /usr/share/nginx/html is"
+
+}
+
+unzip_frontEndCode()
+{
+    if [ $(which unzip) -ne 0 ]; then
+    echo " Unzip utility isn't installed yet."
+    apt install unzip -y
+    validateOperation $? "unzip utility installation"
+
+    else
+        echo " Unzip utility already installed"
+        unzip -o -q /tmp/web.zip
+        validateOperation $? "Extracting front end code"
+    fi
+
+
+}
+
 
 # Adding reverse proxy to '/etc/nginx/sites-enabled' directory.
 cp /home/Robo_Shop/service_files/NginxProxyConfig /etc/nginx/sites-enabled/roboshop.conf
