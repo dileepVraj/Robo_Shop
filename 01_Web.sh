@@ -1,7 +1,7 @@
 #!/bin/bash
 
 LOG_FILE="/tmp/nginx.log"
-Exit_Status=$($?)
+Exit_Status=$?
 RED=$(tput setaf 1)
 GREEN=$(tput setaf 2)
 WHITE=$(tput setaf 7)
