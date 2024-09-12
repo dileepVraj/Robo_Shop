@@ -26,9 +26,9 @@ validate_user() {
 
 
 validate_operation(){
-    if ! "$Exit_Status" ; then
+    if [ "$Exit_Status" -ne 0 ]; then
         echo "$RED Sorry $2 failed $WHITE"
-    elif [ $1 -eq 0 ]; then
+    elif [ $Exit_Status -eq 0 ]; then
         echo  "$GREEN yeah 👍 $2 success. $WHITE" 
     fi
 }
