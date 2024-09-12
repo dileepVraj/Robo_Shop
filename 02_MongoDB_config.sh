@@ -99,6 +99,15 @@ restart_mongoDB(){
     validate_operation $? "mongo_DB restart is"
 }
 
+check_and_install_gpg_key
+import_mongo_db_gpg_key
+create_list_file
+reload_package_database
+install_mongo_db_community_server
+modify_mongodb_selfBind_IP
+restart_mongoDB
+
+
 
 
 
