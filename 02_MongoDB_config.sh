@@ -72,7 +72,7 @@ create_list_file() {
 }
 
 reload_package_database(){
-    apt update -y
+    apt update -y &> /dev/null
     validate_operation $Exit_Status "Package Update"
 
 }
