@@ -12,15 +12,19 @@ validate_user() {
     if [ "$UID" -eq 0 ]; then
         echo -e "$GREEN""You are root user, good to install services.""$WHITE"
         
-        read -p "Do you want to switch as root user? (yes/no): " response
-        if [ "$response" = "yes" ]; then
-            sudo su -
-            validate_operation $Exit_Status "Switch to root user"
-        fi
+        
 
     else
         echo -e "$RED Only root users can install services, sorry 😒 $WHITE "
-        exit 1
+        
+        read -pr "Do you want to switch as root user? (yes/no): " response
+        if [ "$response" = "yes" ]; then
+            sudo su -
+            validate_operation $Exit_Status "Switch to root user"
+        else
+            echo "You have choose to not switch as root user, we can't install packages, hence exiting"
+            exit
+        fi
     fi
 }
 
