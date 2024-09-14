@@ -42,9 +42,18 @@ installRedis(){
     sed -i 's/^bind 127.0.0.1 ::1/bind 0.0.0.0/' /etc/redis/redis.conf
     validateOperation $? "Modified IP address to 0.0.0.0 is: "
 
-    # Restarting redis-cli
+    
+    # Daemon reload.
+    systemctl daemon-reload
+    validateOperation $? "Daemon is"
+
+    # Starting redis.
+    systemctl start redis
+    validateOperation $? "Starting redis is"
+    
+    # Restarting Redis.
     systemctl restart redis
-    validateOperation &? "Redis restart is "
+    validateOperation $? "Redis restart is "
 
     # Enabling redis.
     systemctl enable redis
