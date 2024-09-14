@@ -59,8 +59,8 @@ validate_user() {
 validate_operation(){
     if [ $1 -ne 0 ]; then
         echo " $RED Sorry $2 failed $WHITE"
-    elif [ $1 -eq 0 ]; then
-        echo "$GREEN yeah 👍 $2 $WHITE"
+    else [ $1 -eq 0 ]; then
+        echo "$GREEN yes 👍 $2 $WHITE"
     fi
 }
 
@@ -136,20 +136,20 @@ install_Node.js(){
     fi
 
     # downloading NodeSource Node.js 18 repository.
-    curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-    validate_operation $? "NodeSource repository is"
+    curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &>> $LOG_FILE
+    validate_operation $? "NodeSource repository downloaded successfully"
 
     # Installing Node.js.
     apt install nodejs -y &>> $LOG_FILE
-    validate_operation $? "Node.js installation is"
+    validate_operation $? "Node.js installation is successfull"
 
     # Verifying is Node.js installed.
     NodejsCheck=$(node -v)
 
-    if echo $NodejsCheck | grep -q "18"; then
-    echo "$GREEN Node.js is installed $WHITE"
+    if [$NodejsCheck = "v18.20.4" ]; then
+    echo "$GREEN Node.js is installed successfully $WHITE"
     else
-        echo "$RED Node.js isn't installed $WHITE"
+        echo "$RED Failed to install Node.js $WHITE"
     fi
 
     
@@ -158,7 +158,7 @@ install_Node.js(){
 downloadingApplicationCode(){
     # Downloading 'catalogue' application code to /tmp directory.
     curl -o /tmp/catalogue.zip https://roboshop-builds.s3.amazonaws.com/catalogue.zip
-    validate_operation $? "Application code is"
+    validate_operation $? "Application code is downloaded successfully."
 
 }
 
@@ -215,7 +215,7 @@ startingCatalogue(){
 installingMongodbShell(){
     # Installing shell.
     apt install mongodb-mongosh -y &>> $LOG_FILE
-    validate_operation $? "Mongodb Shell installation is"
+    validate_operation $? "Mongodb Shell installation is successfull"
     shellVersion=$(mongosh --version)
     echo " $GREEN Mongodb shell version is $shellVersion $WHITE"
 }
@@ -251,7 +251,7 @@ startingCatalogue
 
 installingMongodbShell
 
-loadingCatalogueSchema "172.31.35.84"
+# loadingCatalogueSchema "172.31.35.84"
 
 
 
