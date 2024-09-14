@@ -118,7 +118,7 @@ createDirectory() {
 
 install_Node.js(){
     # updating package list.
-    sudo update -y &> /dev/null
+    apt update -y &>> /dev/null
     echo "$GREEN Updated package list $WHITE"
 
     # verify is curl installed.
@@ -165,6 +165,16 @@ downloadingApplicationCode(){
 unzipTheApplicationCode(){
     # This function is to unzip application code in /tmp in /app directory , we using option '-o'
     # ....to override if any same files exists in the directory.
+
+    if ! command -v unzip; then
+    echo "$RED unzip isn't installed do you want to install yes/no $WHITE"
+    read -r response
+    if [ $response = "yes" ];then
+    apt install unzip -y
+    validate_operation $? "unzip utility installation is"
+    else
+        echo "unzip utility already installed"
+    fi
 
     # unziping the downloaded catalogue.zip file in /app directory.
     unzip -o /tmp/catalogue.zip
