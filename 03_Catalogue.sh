@@ -146,7 +146,7 @@ install_Node.js(){
     # Verifying is Node.js installed.
     NodejsCheck=$(node -v)
 
-    if [$NodejsCheck = "v18.20.4" ]; then
+    if [ $NodejsCheck = "v18.20.4" ]; then
     echo "$GREEN Node.js is installed successfully $WHITE"
     else
         echo "$RED Failed to install Node.js $WHITE"
