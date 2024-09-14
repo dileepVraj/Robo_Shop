@@ -214,6 +214,9 @@ startingCatalogue(){
 
 installingMongodbShell(){
     # Installing shell.
+    wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
+    echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+    sudo apt update
     apt install mongodb-mongosh -y &>> $LOG_FILE
     validate_operation $? "Mongodb Shell installation is successfull"
     shellVersion=$(mongosh --version)
@@ -223,7 +226,7 @@ installingMongodbShell(){
 # Takes 1 argument (IP address of MONGO_DB instance.)
 loadingCatalogueSchema(){
     # Loading schema to mongodb from catalogue 'ms' 
-    mongo --host $? </app/schema/catalogue.js
+    mongosh --host $? </app/schema/catalogue.js
     validate_operation $? "Successfully loaded catalogue schema to mongo_db"
 
 
