@@ -66,7 +66,7 @@ import_mongo_db_gpg_key() {
     # Trust Validation: Ubuntu's apt package manager requires a valid GPG key to trust the repository. 
     # Without importing the GPG key, apt will not be able to verify the source of the packages, and you 
     # will get an error when you try to install or update MongoDB.
-    
+
 
 
 
@@ -126,7 +126,7 @@ restart_mongoDB(){
     validate_operation $? "mongo_DB restart is"
 }
 
-check_and_install_gpg_key
+check_and_install_gnupg
 import_mongo_db_gpg_key
 create_list_file
 reload_package_database
