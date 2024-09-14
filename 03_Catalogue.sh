@@ -50,12 +50,13 @@ validate_user() {
         if [ $response = "yes" ];then
         sudo su -
         validate_operation $? "Switching as root user is"
+        fi
         
     
     fi
 }
 
-validate_operation() {
+validate_operation(){
     if [ $1 -ne 0 ]; then
         echo " $RED Sorry $2 failed $WHITE"
     elif [ $1 -eq 0 ]; then
