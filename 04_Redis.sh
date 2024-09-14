@@ -22,51 +22,39 @@ validateOperation() {
     fi
 }
 
-# This function takes only placeholder parameter 'username'.
-addUser() {
-    if id "$1" &>/dev/null;then
-    echo "Yes user "$1" exists."
+installRedis(){
+    # Update apt package.
+    apt update -y &>> /dev/null
+
+    # Install redis server.
+    if ! command -v redis-cli; then
+    echo " Redis isn't installed "
+
+    echo "Installing redis...."
+    apt install redis-server -y &>>/dev/null
+    validateOperation $? "Redis installatino is "
     else
-        echo "No user "$1" is not available."
-        useradd "$1"
-        echo "New user "$1" is created."
+    redisVersion=$(redis-cli --version)
+        echo "Redis already installed and version is: $redisVersion"
     fi
 
+    # Modifying Redis configuration file and changing 127.0.0.0 ::1 to 0.0.0.0.
+    sed -i 's/^bind 127.0.0.1 ::1/bind 0.0.0.0/' /etc/redis/redis.conf
+    validateOperation $? "Modified IP address to 0.0.0.0 is: "
+
+    # Restarting redis-cli
+    systemctl restart redis
+    validateOperation &? "Redis restart is "
+
+    # Enabling redis.
+    systemctl enable redis
+    validateOperation $? "enabing redis is "
+    
 }
 
-createDirectory(){
-    if [ -d $1 ]; then
-    echo "Directory '$1' is available."
-    else
-        echo "Directory '$1' is not available"
-        mkdir -p "$1"
-        echo "Directory '$1' is created successfully."
-    fi  
-}
-
-# validating user
 validateUser
+installRedis
 
-# Installing Redis repo file as RPM.
-dnf install https://rpms.remirepo.net/enterprise/remi-release-8.rpm -y &>> "$LOG_FILE"
-validateOperation $? "Redis repo file downloaded"
 
-# Enabling Redis 6.2 from package streams.
-dnf module enable redis:remi-6.2 -y &>> $LOG_FILE
-validateOperation $? "Enabling Redis package streams 6.2 is"
 
-# Installing 'Redis'.
-dnf install redis -y &>> $LOG_FILE
-validateOperation $? "Redis installation"
 
-# Updating the listning address from '127.0.0.1' to 0.0.0.0 in /etc/redis.conf /etc/redis/redis.conf
-sed -i 's/127.0.0.1/0.0.0.0/g' /etc/redis/redis.conf
-validateOperation $? "Bind address 127.0.0.1 is changed to 0.0.0.0"
-
-# Enabling redis
-systemctl enable redis
-validateOperation $? "Redis enabling"
-
-# Starting redis
-systemctl start redis 
-validateOperation $? "Redis_start"
