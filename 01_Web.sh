@@ -209,6 +209,7 @@ download_frontEndCode(){
 unzip_frontEndCode(){
     if ! command -v unzip &> /dev/null; then
         echo "$RED Unzip utility isn't installed yet. $WHITE"
+        echo "$RED installing unzip $WHITE"
         sudo apt install unzip -y
         validateOperation "$Exit_Status" "unzip utility installation"
     else
@@ -235,6 +236,7 @@ settingUpReverseProxy(){
     # provided by Nginx. It typically contains a basic configuration for a default server block 
     # (or virtual host) that Nginx uses if no other server blocks match a request.
 
+    echo "Removing default configuration of Nginx"
     rm -r /etc/nginx/sites-enabled/default
     
 
