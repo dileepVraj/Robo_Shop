@@ -59,7 +59,7 @@ validate_user() {
 validate_operation(){
     if [ $1 -ne 0 ]; then
         echo " $RED Sorry $2 failed $WHITE"
-    else [ $1 -eq 0 ]; then
+    else
         echo "$GREEN yes 👍 $2 $WHITE"
     fi
 }
