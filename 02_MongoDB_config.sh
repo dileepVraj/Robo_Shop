@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 Exit_Status=$?
 RED=$(tput setaf 1)
 GREEN=$(tput setaf 2)
@@ -37,7 +38,13 @@ validate_operation(){
     fi
 }
 
-check_and_install_gpg_key(){
+check_and_install_gnupg(){
+
+    # GnuPG (GNU Privacy Guard), often abbreviated as GPG, is a free and open-source software that 
+    # implements the OpenPGP standard. It is used for secure encryption and digital signing of data 
+    # and communications. GnuPG allows users to encrypt data and create digital signatures to ensure 
+    # the integrity and confidentiality of files, emails, and other forms of digital communication.
+
     if ! command -v gpg &> /dev/null;then
     echo "$RED gnupg is not installed, Installing.... $WHITE"
     apt install gnupg -y
@@ -47,6 +54,22 @@ check_and_install_gpg_key(){
 }
 
 import_mongo_db_gpg_key() {
+    # If you don't import the GPG key for MongoDB on Ubuntu, you won't be able to install MongoDB 
+    # successfully using the apt package manager. Here's why:
+
+    # Why is the GPG Key Necessary?
+    # Package Integrity: When you install MongoDB (or any software) from a third-party repository, 
+    # the GPG key is used to verify the integrity and authenticity of the packages. 
+    # It ensures that the packages come from the official MongoDB repository and have not been tampered 
+    # with.
+
+    # Trust Validation: Ubuntu's apt package manager requires a valid GPG key to trust the repository. 
+    # Without importing the GPG key, apt will not be able to verify the source of the packages, and you 
+    # will get an error when you try to install or update MongoDB.
+    
+
+
+
     # URL of the MongoDB GPG key
     local key_url="https://www.mongodb.org/static/pgp/server-7.0.asc"
     

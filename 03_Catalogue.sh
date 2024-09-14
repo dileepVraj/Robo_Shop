@@ -3,24 +3,68 @@
 # storing user ID in a variable.
 ID=$(id -u)
 LOG_FILE="/tmp/catalogue.log"
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+WHITE=$(tput setaf 7)
+
+
+# Notes:
+
+# How to insatall nodejs 18 on ubuntu ec2 instance.
+
+# To install nodejs 18 on ubuntu ec2 instance, we will be using Node.js repository, which makes it easy to install the lates
+#.. version of Node.js
+
+# Steps to insatall:
+
+# Update package list: apt update -y
+# Install curl: apt install curl -y
+# Add NodeSource Node.js 18 repository: Use the following command to add the NodeSource repository for Node.js 18.x.
+
+# Command: curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+    # Breakdown:
+    # ---------
+        # The command downloads a Node.js setup script from https://deb.nodesource.com/setup_18.x using curl. 
+        # The options used (-fsSL) ensure that the download process is silent but still shows errors and follows any redirects.
+        # The downloaded script is then passed directly to bash via a pipe, where bash executes the script with superuser 
+        # privileges (sudo). The -E option makes sure environment variables are preserved during this process.
+# Insatll Node.js" apt install nodejs -y
+# Verify the Node.js installation: node -v
+# build essentials: apt install build-essential -y
+
+
+
+
+
 
 validate_user() {
     if [ $ID -eq 0 ]; then
         echo "you are root user, good to install services"
     else
         echo "only root users can install servies sorry 😒"
+
+        echo " Do you want to switch to root user? enter yes/no"
+
+        read -r response
+
+        if [ $response = "yes" ];then
+        sudo su -
+        validate_operation $? "Switching as root user is"
+        
+    
     fi
 }
 
 validate_operation() {
     if [ $1 -ne 0 ]; then
-        echo "Sorry $2 failed"
+        echo " $RED Sorry $2 failed $WHITE"
     elif [ $1 -eq 0 ]; then
-        echo " yeah 👍 $2"
+        echo "$GREEN yeah 👍 $2 $WHITE"
     fi
 }
 
 
+# Takes 1 argument 'username' to be created.
 add_user() {
     # This function takes one positional parameter(username).
     # The 'id $1(positional parameter 1) returns response of user details if present, if not an error...
@@ -40,12 +84,12 @@ add_user() {
 
 
 
-
+# Takes 1 argument directory path to be create.
 createDirectory() {
     # This function takes 1 arguments, 1.path to directory we want create.
 
     # Usage of this function:
-    # This function checks for a directory is present or not which is passed as argument.
+    # This function checks for a directory is present or not which passed as argument.
     # If available it will prints directory is available message.
     # If directory is not available it will creates directory and prints the success message.
     
@@ -71,68 +115,138 @@ createDirectory() {
 }   
 
 
+install_Node.js(){
+    # updating package list.
+    sudo update -y &> /dev/null
+    echo "$GREEN Updated package list $WHITE"
+
+    # verify is curl installed.
+    if ! command -v curl; then
+    echo "$RED curl isn't installed, do you want to install it? yes/no"
+    read -r response
+        if [ $response = "yes" ];then
+        echo "$GREEN Installing curl... $WHITE"
+        apt install curl -y &>> $LOG_FILE
+        validate_operation $? "Curl installation is"
+        else
+            echo "$RED Curl installation is failed... $WHITE"
+        fi
+
+    fi
+
+    # downloading NodeSource Node.js 18 repository.
+    curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+    validate_operation $? "NodeSource repository is"
+
+    # Installing Node.js.
+    apt install nodejs -y &>> $LOG_FILE
+    validate_operation $? "Node.js installation is"
+
+    # Verifying is Node.js installed.
+    NodejsCheck=$(node -v)
+
+    if echo $NodejsCheck | grep -q "18"; then
+    echo "$GREEN Node.js is installed $WHITE"
+    else
+        echo "$RED Node.js isn't installed $WHITE"
+    fi
+
+    
+}
+
+downloadingApplicationCode(){
+    # Downloading 'catalogue' application code to /tmp directory.
+    curl -o /tmp/catalogue.zip https://roboshop-builds.s3.amazonaws.com/catalogue.zip
+    validate_operation $? "Application code is"
+
+}
+
+unzipTheApplicationCode(){
+    # This function is to unzip application code in /tmp in /app directory , we using option '-o'
+    # ....to override if any same files exists in the directory.
+
+    # unziping the downloaded catalogue.zip file in /app directory.
+    unzip -o /tmp/catalogue.zip
+    validate_operation $? "Unziping application code in 'tmp/catalogue.zip'"
+
+}
 
 
+installNPM(){
+    # installing npm package manager for nodejs packages.
+    npm install &>> $LOG_FILE
+    validate_operation $? "npm installation is"
+}
+
+creatingServiceFile(){
+    # adding catalogue.service file in /etc/systemd/system/ directory.
+    cp /home/Robo_Shop/service_files/Catalogue_service /etc/systemd/system/catalogue.service
+    validate_operation $? "catalogue.service is created"
+}
+
+daemonRestart(){
+    # Restarting the system daemon.
+    systemctl daemon-reload
+    validate_operation $? "daemon reloaded good to go.."
+
+}
+
+startingCatalogue(){
+    # Start catalogue service.
+    systemctl enable catalogue
+    validate_operation $? "Catalogue enabled"
+    systemctl start catalogue
+    validate_operation $? "Catalogue started"
+
+}
+
+installingMongodbShell(){
+    # Installing shell.
+    apt install mongodb-mongosh -y &>> $LOG_FILE
+    validate_operation $? "Mongodb Shell installation is"
+    shellVersion=$(mongosh --version)
+    echo " $GREEN Mongodb shell version is $shellVersion $WHITE"
+}
+
+# Takes 1 argument (IP address of MONGO_DB instance.)
+loadingCatalogueSchema(){
+    # Loading schema to mongodb from catalogue 'ms' 
+    mongo --host $? </app/schema/catalogue.js
+    validate_operation $? "Successfully loaded catalogue schema to mongo_db"
 
 
-
-
+}
 
 validate_user
 
-#Disabling default nodejs module.
-dnf module disable nodejs -y
-validate_operation $? "NodeJS default 'module 10' is disabled"
+install_Node.js
 
-#Enabling NodeJS version 18.
-dnf module enable nodejs:18 -y
-validate_operation $? "NodeJS 18 module is enabled."
+add_user "roboshop"
 
-#Installing NodeJS version 18.
-dnf install nodejs -y &>> $LOG_FILE
-
-#Capturing exit code in a variable after executing 'id <username> command which returns the exit code.'
-
-add_user roboshop
-
-# Changing directory to root.
-cd /
-
-# Verifying do '/app' directory is available or not and if not create one.
 createDirectory "/app"
 
-# Downloading 'catalogue' application code to /tmp directory.
-curl -o /tmp/catalogue.zip https://roboshop-builds.s3.amazonaws.com/catalogue.zip
+downloadingApplicationCode
 
-# unziping the downloaded catalogue.zip file in /app directory.
-unzip -o /tmp/catalogue.zip
+unzipTheApplicationCode
 
-# installing npm package manager for nodejs packages.
-npm install &>> $LOG_FILE
-validate_operation $? "npm installed"
+installNPM
 
-# adding catalogue.service file in /etc/systemd/system/ directory.
-cp /home/Robo_Shop/service_files/Catalogue_service /etc/systemd/system/catalogue.service
-validate_operation $? "catalogue.service is created"
+creatingServiceFile
 
-# Restarting the system daemon.
-systemctl daemon-reload
-validate_operation $? "daemon reloaded good to go.."
+daemonRestart
 
-# Start catalogue service.
-systemctl enable catalogue
-validate_operation $? "Catalogue enabled"
-systemctl start catalogue
-validate_operation $? "Catalogue started"
+startingCatalogue
 
-# creating mongo.repo file in /etc/yum.repos.d/ directory.
-cp /home/Robo_Shop/repo_files/mongodb_repo /etc/yum.repos.d/mongo.repo
-validate_operation $? "mongo.repo file created"
+installingMongodbShell
 
-# Installing mongodb shell(client)
-dnf install mongodb-org-shell -y &>> $LOG_FILE
-validate_operation $? "Mongo_DB client installed successfully"
+loadingCatalogueSchema ""
 
-# Loading schema to mongodb from catalogue 'ms' 
-mongo --host 172.31.43.180 </app/schema/catalogue.js
-validate_operation $? "Successfully loaded catalogue schema to mongo_db"
+
+
+
+
+
+
+
+
+
