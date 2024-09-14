@@ -56,7 +56,7 @@ installRedis(){
     validateOperation $? "Redis restart is "
 
     # Enabling redis.
-    systemctl enable redis
+     systemctl enable redis-server
     validateOperation $? "enabing redis is "
     
 }
