@@ -169,16 +169,16 @@ install_Nginx(){
 
 
     if ! command -v nginx &> /dev/null; then
-    ehco " Nginx isn't installed."
-    apt install nginx -y &>> $LOG_FILE
-    validateOperation "$Exit_Status" "Nginx installation"
-    # Enable nginx.
-    systemctl enable nginx
-    validateOperation "$Exit_Status" "Enabling Nginx"
+        ehco "Nginx isn't installed."
+        apt install nginx -y &>> $LOG_FILE
+        validateOperation "$Exit_Status" "Nginx installation"
+        # Enable nginx.
+        systemctl enable nginx
+        validateOperation "$Exit_Status" "Enabling Nginx"
 
-    # Starting nginx.
-    systemctl start nginx
-    validateOperation "$Exit_Status" "Nginx Start"
+        # Starting nginx.
+        systemctl start nginx
+        validateOperation "$Exit_Status" "Nginx Start"
 
     else
         echo " $GREEN Nginx already installed. $WHITE"
