@@ -105,7 +105,7 @@ install_mongo_db_community_server(){
     apt install mongodb-org -y &> $LOG_FILE
     validate_operation $Exit_Status "MongoDB installation is"
 
-    if [  "$Mongo_Installation" -eq 0 ]; then
+    if command -v mongod;then
         systemctl enable mongod
         validate_operation $Exit_Status "Enabling MongoDB is"
         systemctl start mongod
