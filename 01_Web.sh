@@ -210,8 +210,10 @@ unzip_frontEndCode(){
     if ! command -v unzip &> /dev/null; then
         echo "$RED Unzip utility isn't installed yet. $WHITE"
         echo "$RED installing unzip $WHITE"
-        sudo apt install unzip -y
+        echo "Unzip installation started.."
         validateOperation "$Exit_Status" "unzip utility installation"
+        unzip -oq /tmp/web.zip
+        validateOperation "$Exit_Status" "Extracting front end code"
     else
         echo "$GREEN Unzip utility already installed $WHITE"
         unzip -oq /tmp/web.zip

@@ -1,135 +1,206 @@
 #!/bin/bash
 
-LOG_FILE="/tmp/user.log"
-
-# User is a microservice that is responsible for user registrations and logins in Roboshop e-commercial portal.
-
-validateUser() {
-    if [ $(id -u) -eq 0 ] ; then
-    echo " You are root user good to go"
+validate_user() {
+    if [ $ID -eq 0 ]; then
+        echo "you are root user, good to install services"
     else
-        echo "You are not a root user, wait switching to root user"
+        echo "only root users can install servies sorry 😒"
+
+        echo " Do you want to switch to root user? enter yes/no"
+
+        read -r response
+
+        if [ $response = "yes" ];then
         sudo su -
-        echo " Switched to root user"
+        validate_operation $? "Switching as root user is"
+        fi
+        
+    
     fi
 }
 
-validateOperation() {
-    if [ $1 -eq 0 ]; then
-    echo "Operation '$2' is successfull"
+validate_operation(){
+    if [ $1 -ne 0 ]; then
+        echo " $RED Sorry $2 failed $WHITE"
     else
-        echo "Operation '$2' is falied"
-        exit 1
+        echo "$GREEN yes 👍 $2 $WHITE"
     fi
 }
 
-addUser() {
-    if id "$1" &>/dev/null;then
-    echo "Yes user "$1" exists."
+# Takes one argument <username> to create.
+add_user() {
+    # This function takes one positional parameter(username).
+    # The 'id $1(positional parameter 1) returns response of user details if present, if not an error...
+    # ..response along with the exit status.'
+
+    # If 'id $1' fails the error response is supress to /dev/null directory where it will deleted input
+    # automatically.
+
+    if id "$1" &>/dev/null; then
+        echo "Yes user '$1' exists."
     else
-        echo "No user "$1" is not available."
+        echo "No user '$1' is not available"
         useradd "$1"
-        echo "New user "$1" is created."
+        echo "User '$1' is created."
+    fi
+}
+
+# takes 1 argument 'path to create a directory'. 
+createDirectory() {
+    # This function takes 1 arguments, 1.path to directory we want create.
+
+    # Usage of this function:
+    # This function checks for a directory is present or not which passed as argument.
+    # If available it will prints directory is available message.
+    # If directory is not available it will creates directory and prints the success message.
+    
+    # The '-d' option in bash is used within conditional expressions to test wheather a path is a directory.
+
+    # The '-d' is typically used with 'test' command or within a '[' which is a synonym for 'test'.
+    # It checks if given path exists and is a directory.
+    if [ -d $1  ]; then
+        echo "directory "$1" is available"
+    else
+        echo "directory "$1" is not available"
+        # The option '-p' is used to create the parent directory if not exists,which specified in path.
+        # Ex: mkdir -p /home/dileep/games this command creates 'games' directory in /home/dileep directory,
+        # If /home/dileep is not present it will creates /home/dileep directory without failing the command.
+        mkdir -p "$1"
+        echo "directory "$1" is created"
+        # changing to directory after creation if 'cd' command faile because no directory exists then program will
+        # exists.
+        # The '||' OR operator is used to execute the command following it only if preceding command fails(returns a non-zero exit status).
+        cd "$1" || exit
+        echo "changed to directory "$1" " 
+    fi
+}   
+
+install_Node.js(){
+    # updating package list.
+    apt update -y &>> /dev/null
+    echo "$GREEN Updated package list $WHITE"
+
+    # verify is curl installed.
+    if ! command -v curl; then
+    echo "$RED curl isn't installed, do you want to install it? yes/no"
+    read -r response
+        if [ $response = "yes" ];then
+        echo "$GREEN Installing curl... $WHITE"
+        apt install curl -y &>> $LOG_FILE
+        validate_operation $? "Curl installation is"
+        else
+            echo "$RED Curl installation is failed... $WHITE"
+        fi
+
     fi
 
-}
+    # downloading NodeSource Node.js 18 repository.
+    curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &>> $LOG_FILE
+    validate_operation $? "NodeSource repository downloaded successfully"
 
-createDirectory() {
-    if [ -d $1 ]; then
-    echo "Directory '$1' is available."
+    # Installing Node.js.
+    apt install nodejs -y &>> $LOG_FILE
+    validate_operation $? "Node.js installation is successfull"
+
+    # Verifying is Node.js installed.
+    NodejsCheck=$(node -v)
+
+    if [ $NodejsCheck = "v18.20.4" ]; then
+    echo "$GREEN Node.js is installed successfully $WHITE"
     else
-        echo "Directory '$1' is not available"
-        mkdir -p "$1"
-        echo "Directory '$1' is created successfully."
-    fi  
+        echo "$RED Failed to install Node.js $WHITE"
+    fi
+
+    
 }
 
-validateUser
 
-#Developer has chosen NodeJs, Check with developer which version of NodeJS is needed. 
-#Developer has set a context that it can work with NodeJS >18
+downloadingApplicationCode(){
+    # Downloading 'catalogue' application code to /tmp directory.
+    curl -L -o /tmp/catalogue.zip https://roboshop-builds.s3.amazonaws.com/user.zip
+    validate_operation $? "Application code is downloaded successfully."
 
-#Install NodeJS, By default NodeJS 10 is available, We would like to enable 18 version and install list.
+}
 
-# you can list modules by 'using dnf module ist' command.
+unzipTheApplicationCode(){
+    # This function is to unzip application code in /tmp in /app directory , we using option '-o'
+    # ....to override if any same files exists in the directory.
 
-# disabling default nodejs module.
-dnf module disable nodejs -y
-validateOperation $? "default nodejs module"
+    if ! command -v unzip; then
+    echo "$RED unzip isn't installed do you want to install yes/no $WHITE"
+    read -r response
+        if [ $response = "yes" ];then
+        apt install unzip -y
+        validate_operation $? "unzip utility installation is"
+        else
+            echo "unzip utility already installed"
+        fi
+    fi
 
-# enabling nodejs:18 module.
-dnf module enable nodejs:18 -y
-validateOperation $? "nodejs 18 module enabled"
+    # unziping the downloaded catalogue.zip file in /app directory.
+    unzip -o /tmp/catalogue.zip
+    validate_operation $? "Unziping application code in 'tmp/user.zip'"
 
-# Installing nodejs.
-dnf install nodejs -y
-validateOperation $? "nodejs installed"
+}
 
-# Adding the user.
-addUser roboshop
-validateOperation $? "user roboshop added"
+installNPM(){
+    # installing npm package manager for nodejs packages.
+    npm install &>> $LOG_FILE
+    validate_operation $? "npm installation is"
+}
 
-# creating app directory.
+creatingServiceFile(){
+    # adding catalogue.service file in /etc/systemd/system/ directory.
+    cp /home/Robo_Shop/service_files/User_service /etc/systemd/system/user.service
+    validate_operation $? "catalogue.service is created"
+}
+
+daemonRestart(){
+    # Restarting the system daemon.
+    systemctl daemon-reload
+    validate_operation $? "daemon reloaded good to go.."
+
+}
+
+startingUser(){
+    # Start catalogue service.
+    systemctl enable user
+    validate_operation $? "user enabled"
+    systemctl start user
+    validate_operation $? "user started"
+
+}
+
+installingMongodbShell(){
+    # Installing shell.
+    wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
+    echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+    sudo apt update &>> /dev/null
+    apt install mongodb-mongosh -y &>> $LOG_FILE
+    validate_operation $? "Mongodb Shell installation is successfull"
+    shellVersion=$(mongosh --version)
+    echo " $GREEN Mongodb shell version is $shellVersion $WHITE"
+}
+
+# Takes 1 argument (IP address of MONGO_DB instance.)
+loadingUserSchema(){
+    # Loading schema to mongodb from catalogue 'ms' 
+    mongosh --host $? </app/schema/user.js
+    validate_operation $? "Successfully loaded user schema to mongo_db"
+
+
+}
+
+install_Node
+add_user "roboshop"
 createDirectory "/app"
-
-# Download the application code to '/tmp' directory.
-
-# Explanation:
-# The '-L' option is used to tell the 'curl' to follow any redirects that might occour.
-# The '-o' option specifies the output file. The '-o' option is followed by the path where you
-# ..want to save the downloaded file.
-
-curl -L -o /tmp/user.zip https://roboshop-builds.s3.amazonaws.com/user.zip
-validateOperation $? "successfully downloaded application code"
-
-# changing to '/app' directory.
-cd /app
-validateOperation $? "changed to '/app' directory"
-
-# Unzipping downaloaded application code.
-# The '-o' option tells 'unzip' to overwrite any existing files without prompting you for confirmation.
-# If file extracted from '.zip' archive exists already in the target directory, they will be automatically
-# ...replaced with the files from the archive.
-
-unzip -o /tmp/user.zip
-validateOperation $? "Unziped 'user.zip'"
-
-# Installing npm (node package manager)
-npm install &>> $LOG_FILE
-validateOperation $? "Installed node package manager"
-
-# We need to setup a new service in 'systemd' so systemctl can manage this service.
-cp /home/Robo_Shop/service_files/User_service /etc/systemd/system/user.service
-validateOperation $? "user_service copied successfully to /etc/systemd/system"
-
-# Reloading daemon.
-systemctl daemon-reload
-validateOperation $? "daemon-reload is"
-
-# enabling user.service
-systemctl enable user
-validateOperation $? "user enabled"
-
-# starting user.service
-systemctl start user
-validateOperation $? "user start"
-
-# Copying mongo.repo to /etc/yum.repos.d/ directory.
-cp /home/Robo_Shop/repo_files/mongodb_repo /etc/yum.repos.d/mongo.repo
-validateOperation $? "mongo.repo file created"
-
-# Installing mongodb-shell
-dnf install mongodb-org-shell -y
-validateOperation $? "Mongodb-shell installation"
-
-# Loading schema to mongodb
-mongo --host 172.31.43.180</app/schema/user.js
-validateOperation $? "loading schema to Mongo_db is "
-
-
-
-
-
+downloadingApplicationCode
+installNPM
+creatingServiceFile
+daemonRestart
+startingUser
+installingMongodbShell
+loadingUserSchema ""
 
 
 

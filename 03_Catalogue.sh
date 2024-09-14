@@ -216,7 +216,7 @@ installingMongodbShell(){
     # Installing shell.
     wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
     echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
-    sudo apt update
+    sudo apt update &>> /dev/null
     apt install mongodb-mongosh -y &>> $LOG_FILE
     validate_operation $? "Mongodb Shell installation is successfull"
     shellVersion=$(mongosh --version)
