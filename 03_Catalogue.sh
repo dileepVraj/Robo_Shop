@@ -6,31 +6,36 @@ LOG_FILE="/tmp/catalogue.log"
 RED=$(tput setaf 1)
 GREEN=$(tput setaf 2)
 WHITE=$(tput setaf 7)
+CYAN=$(tput setaf 6)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
 
+# notes(){
+    # Notes:
 
-# Notes:
+    # How to insatall nodejs 18 on ubuntu ec2 instance.
 
-# How to insatall nodejs 18 on ubuntu ec2 instance.
+    # To install nodejs 18 on ubuntu ec2 instance, we will be using Node.js repository, which makes it easy to install the lates
+    #.. version of Node.js
 
-# To install nodejs 18 on ubuntu ec2 instance, we will be using Node.js repository, which makes it easy to install the lates
-#.. version of Node.js
+    # Steps to insatall:
 
-# Steps to insatall:
+    # Update package list: apt update -y
+    # Install curl: apt install curl -y
+    # Add NodeSource Node.js 18 repository: Use the following command to add the NodeSource repository for Node.js 18.x.
 
-# Update package list: apt update -y
-# Install curl: apt install curl -y
-# Add NodeSource Node.js 18 repository: Use the following command to add the NodeSource repository for Node.js 18.x.
+    # Command: curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+        # Breakdown:
+        # ---------
+            # The command downloads a Node.js setup script from https://deb.nodesource.com/setup_18.x using curl. 
+            # The options used (-fsSL) ensure that the download process is silent but still shows errors and follows any redirects.
+            # The downloaded script is then passed directly to bash via a pipe, where bash executes the script with superuser 
+            # privileges (sudo). The -E option makes sure environment variables are preserved during this process.
+    # Insatll Node.js" apt install nodejs -y
+    # Verify the Node.js installation: node -v
+    # build essentials: apt install build-essential -y
 
-# Command: curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-    # Breakdown:
-    # ---------
-        # The command downloads a Node.js setup script from https://deb.nodesource.com/setup_18.x using curl. 
-        # The options used (-fsSL) ensure that the download process is silent but still shows errors and follows any redirects.
-        # The downloaded script is then passed directly to bash via a pipe, where bash executes the script with superuser 
-        # privileges (sudo). The -E option makes sure environment variables are preserved during this process.
-# Insatll Node.js" apt install nodejs -y
-# Verify the Node.js installation: node -v
-# build essentials: apt install build-essential -y
+# }
 
 
 
@@ -60,7 +65,7 @@ validate_operation(){
     if [ $1 -ne 0 ]; then
         echo " $RED Sorry $2 failed $WHITE"
     else
-        echo "$GREEN yes 👍 $2 $WHITE"
+        echo "$GREEN yes 👍 $2 is success $WHITE"
     fi
 }
 
@@ -75,11 +80,11 @@ add_user() {
     # automatically.
 
     if id "$1" &>/dev/null; then
-        echo "Yes user '$1' exists."
+        echo "$BLUE Yes user '$1' exists.$WHITE"
     else
-        echo "No user '$1' is not available"
+        echo "$RED No user '$1' is not available.$WHITE"
         useradd "$1"
-        echo "User '$1' is created."
+        echo "$GREEN User '$1' is created.$WHITE"
     fi
 }
 
@@ -106,12 +111,12 @@ createDirectory() {
         # Ex: mkdir -p /home/dileep/games this command creates 'games' directory in /home/dileep directory,
         # If /home/dileep is not present it will creates /home/dileep directory without failing the command.
         mkdir -p "$1"
-        echo "directory "$1" is created"
+        echo "$GREEN directory "$1" is created.$WHITE"
         # changing to directory after creation if 'cd' command faile because no directory exists then program will
         # exists.
         # The '||' OR operator is used to execute the command following it only if preceding command fails(returns a non-zero exit status).
         cd "$1" || exit
-        echo "changed to directory "$1" " 
+        echo "$BLUE changed to directory $1 $WHITE" 
     fi
 }   
 
@@ -126,7 +131,7 @@ install_Node.js(){
     echo "$RED curl isn't installed, do you want to install it? yes/no"
     read -r response
         if [ $response = "yes" ];then
-        echo "$GREEN Installing curl... $WHITE"
+        echo "$YELLOW Installing curl... $WHITE"
         apt install curl -y &>> $LOG_FILE
         validate_operation $? "Curl installation is"
         else
@@ -140,8 +145,9 @@ install_Node.js(){
     validate_operation $? "NodeSource repository downloaded successfully"
 
     # Installing Node.js.
+    echo "$YELLOW installing Nodejs...$WHITE"
     apt install nodejs -y &>> $LOG_FILE
-    validate_operation $? "Node.js installation is successfull"
+    validate_operation $? "Node.js installation "
 
     # Verifying is Node.js installed.
     NodejsCheck=$(node -v)
@@ -163,13 +169,14 @@ downloadingApplicationCode(){
 }
 
 unzipTheApplicationCode(){
-    # This function is to unzip application code in /tmp in /app directory , we using option '-o'
+    # This function is to unzip application code in /app directory , we using option '-o'
     # ....to override if any same files exists in the directory.
 
     if ! command -v unzip; then
     echo "$RED unzip isn't installed do you want to install yes/no $WHITE"
     read -r response
         if [ $response = "yes" ];then
+        echo "$YELLOW installing unzip utility... $WHITE"
         apt install unzip -y
         validate_operation $? "unzip utility installation is"
         else
@@ -186,6 +193,7 @@ unzipTheApplicationCode(){
 
 installNPM(){
     # installing npm package manager for nodejs packages.
+    echo "$YELLOW installing npm...$WHITE"
     npm install &>> $LOG_FILE
     validate_operation $? "npm installation is"
 }
@@ -216,7 +224,9 @@ installingMongodbShell(){
     # Installing shell.
     wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
     echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+    echo "$YELLOW Updating apt packages...$WHITE"
     sudo apt update &>> /dev/null
+    echo "$YELLOW installing mongodb_shell...$WHITE"
     apt install mongodb-mongosh -y &>> $LOG_FILE
     validate_operation $? "Mongodb Shell installation is successfull"
     shellVersion=$(mongosh --version)
@@ -226,7 +236,7 @@ installingMongodbShell(){
 # Takes 1 argument (IP address of MONGO_DB instance.)
 loadingCatalogueSchema(){
     # Loading schema to mongodb from catalogue 'ms' 
-    mongosh --host $? </app/schema/catalogue.js
+    mongosh --host $? </app/schema/catalogue.js &> /dev/null
     validate_operation $? "Successfully loaded catalogue schema to mongo_db"
 
 
@@ -254,7 +264,7 @@ startingCatalogue
 
 installingMongodbShell
 
-loadingCatalogueSchema "172.31.7.209"
+loadingCatalogueSchema "172.31.36.157"
 
 
 

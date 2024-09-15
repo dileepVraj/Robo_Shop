@@ -5,6 +5,9 @@ Exit_Status=$?
 RED=$(tput setaf 1)
 GREEN=$(tput setaf 2)
 WHITE=$(tput setaf 7)
+CYAN=$(tput setaf 6)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
 LOG_FILE="/tmp/mongodb.log"
 Mongo_Installation=$(command -v mongod)
 
@@ -32,9 +35,9 @@ validate_user() {
 
 validate_operation(){
     if [ "$Exit_Status" -ne 0 ]; then
-        echo "$RED Sorry $2 failed $WHITE"
+        echo "$RED Sorry $2 is failed $WHITE"
     elif [ $Exit_Status -eq 0 ]; then
-        echo  "$GREEN yeah 👍 $2 success. $WHITE" 
+        echo  "$GREEN yeah 👍 $2 is success. $WHITE" 
     fi
 }
 
@@ -47,6 +50,7 @@ check_and_install_gnupg(){
 
     if ! command -v gpg &> /dev/null;then
     echo "$RED gnupg is not installed, Installing.... $WHITE"
+    echo "$YELLOW installing gnupg...$WHITE"
     apt install gnupg -y
     echo "$GREEN gnupg installed successfully $WHITE"
     fi
@@ -95,6 +99,7 @@ create_list_file() {
 }
 
 reload_package_database(){
+    echo "$YELLOW updating apt packages...$WHITE"
     apt update -y &> /dev/null
     validate_operation $Exit_Status "Package Update"
 
@@ -102,6 +107,7 @@ reload_package_database(){
 
 install_mongo_db_community_server(){
     validate_user
+    echo "$YELLOW installing mongodb...$WHITE"
     apt install mongodb-org -y &> $LOG_FILE
     validate_operation $Exit_Status "MongoDB installation is"
 
