@@ -21,9 +21,9 @@ validate_user() {
 
 validate_operation(){
     if [ $1 -ne 0 ]; then
-        echo " $RED Sorry $2 failed $WHITE"
+        echo " $RED Sorry $2 failed$WHITE"
     else
-        echo "$GREEN yes 👍 $2 $WHITE"
+        echo "$GREEN yes 👍 $2 is success$WHITE"
     fi
 }
 
@@ -76,21 +76,24 @@ createDirectory() {
 }   
 
 install_Node.js(){
+
+
     # updating package list.
+    echo "$YELLOW Updading apt packages $WHITE"
     apt update -y &>> /dev/null
     echo "$GREEN Updated package list $WHITE"
 
     # verify is curl installed.
     if ! command -v curl; then
-    echo "$RED curl isn't installed, do you want to install it? yes/no"
-    read -r response
-        if [ $response = "yes" ];then
-        echo "$GREEN Installing curl... $WHITE"
-        apt install curl -y &>> $LOG_FILE
-        validate_operation $? "Curl installation is"
-        else
-            echo "$RED Curl installation is failed... $WHITE"
-        fi
+
+    echo "$RED curl isn't installed.$WHITE"
+    echo "$YELLOW Installing curl... $WHITE"
+
+    apt install curl -y &>> $LOG_FILE
+
+    validate_operation $? "Curl installation is"
+    else
+        echo "$BLUE Curl utility already installed on your machine..$WHITE"
 
     fi
 
@@ -98,19 +101,23 @@ install_Node.js(){
     curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &>> $LOG_FILE
     validate_operation $? "NodeSource repository downloaded successfully"
 
-    # Installing Node.js.
-    apt install nodejs -y &>> $LOG_FILE
-    validate_operation $? "Node.js installation is successfull"
-
-    # Verifying is Node.js installed.
-    NodejsCheck=$(node -v)
-
-    if [ $NodejsCheck = "v18.20.4" ]; then
-    echo "$GREEN Node.js is installed successfully $WHITE"
+    if command -v node &> /dev/null;then
+    echo "$BLUE Nodejs already installed on your machine$WHITE"
     else
-        echo "$RED Failed to install Node.js $WHITE"
-    fi
+        echo "$BLUE Nodejs ins't installed on your machine$WHITE"
+        # Installing Node.js.
+        echo "$YELLOW installing Nodejs...$WHITE"
+        apt install nodejs -y &>> $LOG_FILE
+        validate_operation $? "Node.js installation "
 
+        # Verifying is Node.js installed.
+        NodejsCheck=$(node -v)
+        if [ $NodejsCheck = "v18.20.4" ]; then
+        echo "$GREEN Node.js is installed successfully $WHITE"
+        else
+            echo "$RED Failed to install Node.js $WHITE"
+        fi
+    fi
     
 }
 
@@ -118,47 +125,61 @@ install_Node.js(){
 downloadingApplicationCode(){
     # Downloading 'catalogue' application code to /tmp directory.
     curl -L -o /tmp/catalogue.zip https://roboshop-builds.s3.amazonaws.com/user.zip
-    validate_operation $? "Application code is downloaded successfully."
+    validate_operation $? "Downloading application code "
 
 }
 
 unzipTheApplicationCode(){
-    # This function is to unzip application code in /tmp in /app directory , we using option '-o'
+    # This function is to unzip application code in /app directory , we using option '-o'
     # ....to override if any same files exists in the directory.
 
     if ! command -v unzip; then
     echo "$RED unzip isn't installed do you want to install yes/no $WHITE"
-    read -r response
-        if [ $response = "yes" ];then
-        apt install unzip -y
-        validate_operation $? "unzip utility installation is"
-        else
-            echo "unzip utility already installed"
-        fi
+    echo "$YELLOW installing unzip utility... $WHITE"
+    apt install unzip -y &> /dev/null
+    validate_operation $? "unzip utility installation is"
+    else
+        echo "unzip utility already installed"
+        
     fi
 
+    # changing to directory after creation if 'cd' command faile because no directory exists then program will
+    # exists.
+    # The '||' OR operator is used to execute the command following it only if preceding command fails(returns a non-zero exit status).
+    cd "/app" || exit
+    echo "$BLUE changed to directory /app $WHITE" 
+
     # unziping the downloaded catalogue.zip file in /app directory.
-    unzip -o /tmp/catalogue.zip
-    validate_operation $? "Unziping application code in 'tmp/user.zip'"
+    unzip -oq /tmp/user.zip
+    validate_operation $? "Unziping application code in 'tmp/user.zip' "
 
 }
 
 installNPM(){
-    # installing npm package manager for nodejs packages.
-    npm install &>> $LOG_FILE
-    validate_operation $? "npm installation is"
+
+    if command -v npm &> /dev/null; then
+        echo "$BLUE npm already installed on your machine...$WHITE"
+    else
+        echo "$BLUE npm isn't installed yet on your machine$WHITE"
+        # installing npm package manager for nodejs packages.
+        echo "$YELLOW installing npm...$WHITE"
+        npm install &>> $LOG_FILE
+        validate_operation $? "Installing NPM"
+
+    fi
+    
 }
 
 creatingServiceFile(){
-    # adding catalogue.service file in /etc/systemd/system/ directory.
+    # adding user.service file in /etc/systemd/system/ directory.
     cp /home/Robo_Shop/service_files/User_service /etc/systemd/system/user.service
-    validate_operation $? "catalogue.service is created"
+    validate_operation $? "user.service is created"
 }
 
 daemonRestart(){
     # Restarting the system daemon.
     systemctl daemon-reload
-    validate_operation $? "daemon reloaded good to go.."
+    validate_operation $? "Reloading daemon"
 
 }
 
@@ -172,26 +193,34 @@ startingUser(){
 }
 
 installingMongodbShell(){
-    # Installing shell.
-    wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
-    echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
-    sudo apt update &>> /dev/null
-    apt install mongodb-mongosh -y &>> $LOG_FILE
-    validate_operation $? "Mongodb Shell installation is successfull"
-    shellVersion=$(mongosh --version)
-    echo " $GREEN Mongodb shell version is $shellVersion $WHITE"
+
+    if command -v mongosh &> /dev/null;then
+    echo "$BLUE mongosh already installed on your machine $WHITE"
+    else
+
+        # Installing shell.
+        wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
+        echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+        echo "$YELLOW Updating apt packages...$WHITE"
+        sudo apt update &>> /dev/null
+        echo "$YELLOW installing mongodb_shell...$WHITE"
+        apt install mongodb-mongosh -y &> $LOG_FILE
+        validate_operation $? "Installing MongoDB"
+        shellVersion=$(mongosh --version)
+        echo " $GREEN Mongodb shell version is $shellVersion $WHITE"
+    fi
 }
 
 # Takes 1 argument (IP address of MONGO_DB instance.)
 loadingUserSchema(){
     # Loading schema to mongodb from catalogue 'ms' 
-    mongosh --host $? </app/schema/user.js
+    mongosh --host $? </app/schema/user.js &> /dev/null
     validate_operation $? "Successfully loaded user schema to mongo_db"
 
 
 }
 
-install_Node
+install_Node.js
 add_user "roboshop"
 createDirectory "/app"
 downloadingApplicationCode
@@ -200,7 +229,7 @@ creatingServiceFile
 daemonRestart
 startingUser
 installingMongodbShell
-loadingUserSchema ""
+loadingUserSchema "172.31.37.70"
 
 
 
