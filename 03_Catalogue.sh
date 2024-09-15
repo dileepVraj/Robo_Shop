@@ -83,6 +83,7 @@ add_user() {
         echo "$BLUE Yes user '$1' exists.$WHITE"
     else
         echo "$RED No user '$1' is not available.$WHITE"
+        echo "$BLUE creating $1 user$WHITE"
         useradd "$1"
         echo "$GREEN User '$1' is created.$WHITE"
     fi
@@ -103,20 +104,17 @@ createDirectory() {
 
     # The '-d' is typically used with 'test' command or within a '[' which is a synonym for 'test'.
     # It checks if given path exists and is a directory.
-    if [ -d $1  ]; then
-        echo "directory "$1" is available"
+    if [ -d "/app"  ]; then
+        echo "$GREEN directory ""/app" is available $WHITE"
     else
-        echo "directory "$1" is not available"
+        echo "$RED directory ""/app" is not available $WHITE"
         # The option '-p' is used to create the parent directory if not exists,which specified in path.
         # Ex: mkdir -p /home/dileep/games this command creates 'games' directory in /home/dileep directory,
         # If /home/dileep is not present it will creates /home/dileep directory without failing the command.
-        mkdir -p "$1"
-        echo "$GREEN directory "$1" is created.$WHITE"
-        # changing to directory after creation if 'cd' command faile because no directory exists then program will
-        # exists.
-        # The '||' OR operator is used to execute the command following it only if preceding command fails(returns a non-zero exit status).
-        cd "$1" || exit
-        echo "$BLUE changed to directory $1 $WHITE" 
+        echo "$YELLOW creating directory $WHITE"
+        mkdir -p "/app"
+        echo "$GREEN directory /app created successfully.$WHITE"
+        
     fi
 }   
 
@@ -190,9 +188,15 @@ unzipTheApplicationCode(){
         fi
     fi
 
+    # changing to directory after creation if 'cd' command faile because no directory exists then program will
+    # exists.
+    # The '||' OR operator is used to execute the command following it only if preceding command fails(returns a non-zero exit status).
+    cd "/app" || exit
+    echo "$BLUE changed to directory /app $WHITE" 
+
     # unziping the downloaded catalogue.zip file in /app directory.
     unzip -o /tmp/catalogue.zip
-    validate_operation $? "Unziping application code in 'tmp/catalogue.zip'"
+    validate_operation $? "Unziping application code in 'tmp/catalogue.zip is'"
 
 }
 
@@ -268,7 +272,7 @@ install_Node.js
 
 add_user "roboshop"
 
-createDirectory "/app"
+createDirectory 
 
 downloadingApplicationCode
 
@@ -284,7 +288,7 @@ startingCatalogue
 
 installingMongodbShell
 
-loadingCatalogueSchema "172.31.44.30"
+loadingCatalogueSchema "172.31.43.64"
 
 
 
