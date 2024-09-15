@@ -231,6 +231,7 @@ install_Node.js
 add_user "roboshop"
 createDirectory "/app"
 downloadingApplicationCode
+unzipTheApplicationCode
 installNPM
 creatingServiceFile
 daemonRestart
