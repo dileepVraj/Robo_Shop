@@ -105,7 +105,7 @@ install_Node.js(){
     fi
 
     # downloading NodeSource Node.js 18 repository.
-    curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &>> $LOG_FILE
+    curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &> /dev/null
     validate_operation $? "NodeSource repository downloaded successfully"
 
     if command -v node &> /dev/null;then
@@ -114,7 +114,7 @@ install_Node.js(){
         echo "$BLUE Nodejs ins't installed on your machine$WHITE"
         # Installing Node.js.
         echo "$YELLOW installing Nodejs...$WHITE"
-        apt install nodejs -y &>> $LOG_FILE
+        apt install nodejs -y &> /dev/null
         validate_operation $? "Node.js installation "
 
         # Verifying is Node.js installed.
@@ -170,7 +170,7 @@ installNPM(){
         echo "$BLUE npm isn't installed yet on your machine$WHITE"
         # installing npm package manager for nodejs packages.
         echo "$YELLOW installing npm...$WHITE"
-        npm install &>> $LOG_FILE
+        npm install &> /dev/null
         validate_operation $? "Installing NPM"
 
     fi
@@ -211,7 +211,7 @@ installingMongodbShell(){
         echo "$YELLOW Updating apt packages...$WHITE"
         sudo apt update &>> /dev/null
         echo "$YELLOW installing mongodb_shell...$WHITE"
-        apt install mongodb-mongosh -y &> $LOG_FILE
+        apt install mongodb-mongosh -y &> /dev/null
         validate_operation $? "Installing MongoDB"
         shellVersion=$(mongosh --version)
         echo " $GREEN Mongodb shell version is $shellVersion $WHITE"
