@@ -130,8 +130,8 @@ install_Node.js(){
 
 
 downloadingApplicationCode(){
-    # Downloading 'catalogue' application code to /tmp directory.
-    curl -L -o /tmp/catalogue.zip https://roboshop-builds.s3.amazonaws.com/user.zip
+    # Downloading 'user' application code to /tmp directory.
+    curl -L -o /tmp/user.zip https://roboshop-builds.s3.amazonaws.com/user.zip
     validate_operation $? "Downloading application code "
 
 }
