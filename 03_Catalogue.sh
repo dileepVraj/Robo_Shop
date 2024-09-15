@@ -199,7 +199,7 @@ unzipTheApplicationCode(){
 installNPM(){
 
     if command -v npm &> /dev/null; then
-    echo "$BLUE npm already installed on your machine...$WHITE"
+        echo "$BLUE npm already installed on your machine...$WHITE"
     else
         echo "$BLUE npm isn't installed yet on your machine$WHITE"
         # installing npm package manager for nodejs packages.
