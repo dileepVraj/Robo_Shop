@@ -131,9 +131,9 @@ validateOperation() {
     # function that two arguments 1. exit code status($?) and operation name and checks if exit code is
     #.. zero if yes then prints success message of operation we specified, if not failed message of operation.
     if [ "$1" -eq 0 ];then
-    echo "$GREEN $2 is success $WHITE"
+    echo "$GREEN $2 is success😊 $WHITE"
     else
-        echo "$RED $2 is failed $WHITE"
+        echo "$RED $2 is failed🤔 $WHITE"
     fi
 }
 
@@ -144,16 +144,19 @@ install_Nginx(){
 
     if ! command -v nginx &> /dev/null;then
         ehco "$CYAN Nginx isn't installed.$WHITE"
+
         echo "$YELLOW Installing Nginx ...$WHITE"
         apt install nginx -y &>> $LOG_FILE
         validateOperation "$Exit_Status" "Nginx installation"
-        # Enable nginx.
+
+
+        # Enabling Nginx.
         systemctl enable nginx
         validateOperation "$Exit_Status" "Enabling Nginx"
 
         # Starting nginx.
         systemctl start nginx
-        validateOperation "$Exit_Status" "Nginx Start"
+        validateOperation "$Exit_Status" "Starting Nginx"
 
     else
         echo " $GREEN Nginx already installed 😊. $WHITE"
@@ -161,24 +164,25 @@ install_Nginx(){
 
 }
 
-
 remove_default_nginx_files(){
+    # Notes:
     # Removing the default content(welcome code) that web-server(nginx) is serving, located in
     #.. /usr/share/nginx/html/.
+
     rm -rf /usr/share/nginx/html/*
-    validateOperation "$Exit_Status" "Removing default content"
+    validateOperation "$Exit_Status" "Removing default Nginx files"
 }
 
 download_frontEndCode(){
 
     # Downloading front end contend(html).
-    curl -L -o /tmp/web.zip https://roboshop-builds.s3.amazonaws.com/web.zip
+    curl -L -o /tmp/web.zip https://roboshop-builds.s3.amazonaws.com/web.zip &> /dev/null
     validateOperation "$Exit_Status" "Downloading front code"
- 
 
 }
 
 unzip_frontEndCode(){
+
     # Change directory to /usr/share/nginx/html
     cd /usr/share/nginx/html || exit
     currentDirectory=$(pwd)
@@ -187,13 +191,16 @@ unzip_frontEndCode(){
     else
         echo "$RED change directory to /usr/share/nginx/html some how isn't happened.$WHITE"
     fi
-
     validateOperation "$Exit_Status" "Changing directory to /usr/share/nginx/html is"
+
+    # Verifying and installing Unzip utility.
     if ! command -v unzip &> /dev/null; then
         echo "$RED Unzip utility isn't installed yet. $WHITE"
         echo "$YELLOW Installing Unzip... $WHITE"
         apt install unzip &> /dev/null
-        validateOperation "$Exit_Status" "unzip utility installation"
+        validateOperation "$Exit_Status" "Unzip utility installation"
+
+        # Unzipping web.zip 
         unzip -oq /tmp/web.zip
         validateOperation "$Exit_Status" "Extracting front end code"
     else
@@ -211,14 +218,15 @@ unzip_frontEndCode(){
     fi
 }
 
-
-
-
-
 settingUpReverseProxy(){
-    # Adding reverse proxy to '/etc/nginx/sites-enabled' directory.
+
+    # Copying 'NginxProxyConfig' file to /etc/nginx/sites-enabled/ directory as 'roboshop.conf'
     cp /home/Robo_Shop/service_files/NginxProxyConfig /etc/nginx/sites-enabled/roboshop.conf
-    validateOperation "$Exit_Status" "Copying of nginx proxy file"
+    if [ -f "/etc/nginx/sites-enabled/roboshop.conf" ];then
+    echo "$GREEN Successfully created roboshop.conf file 😊 $WHITE"
+    else
+    echo "$RED Somehow failed to create roboshop.conf file 🤔 $WHITE"
+        
     # Removing 'default' directory in /etc/nginx/sites-enabled.
 
     # In the /etc/nginx/sites-enabled/ directory, the default file is a default configuration file 
@@ -228,9 +236,6 @@ settingUpReverseProxy(){
     echo "$CYAN Removing default configuration of Nginx.$WHITE"
     rm -r /etc/nginx/sites-enabled/default
     validate_operation $? "Removing default config directory is"
-    
-
-
 }
 
 restartNginx(){
