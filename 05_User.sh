@@ -221,7 +221,7 @@ installingMongodbShell(){
 # Takes 1 argument (IP address of MONGO_DB instance.)
 loadingUserSchema(){
     # Loading schema to mongodb from catalogue 'ms' 
-    mongosh --host $? </app/schema/user.js &> /dev/null
+    mongosh --host $? </app/schema/user.js
     validate_operation $? "Successfully loaded user schema to mongo_db"
 
 
