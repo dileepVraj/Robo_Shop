@@ -43,16 +43,19 @@ validate_operation(){
 
 check_and_install_gnupg(){
 
+
     # GnuPG (GNU Privacy Guard), often abbreviated as GPG, is a free and open-source software that 
     # implements the OpenPGP standard. It is used for secure encryption and digital signing of data 
     # and communications. GnuPG allows users to encrypt data and create digital signatures to ensure 
     # the integrity and confidentiality of files, emails, and other forms of digital communication.
 
-    if ! command -v gpg &> /dev/null;then
-    echo "$RED gnupg is not installed, Installing.... $WHITE"
-    echo "$YELLOW installing gnupg...$WHITE"
-    apt install gnupg -y
-    echo "$GREEN gnupg installed successfully $WHITE"
+    if command -v gpg &> /dev/null;then
+    echo "$BLUE gnupg already installed on your machine$WHITE"
+    else
+        echo "$RED gnupg is not installed, Installing.... $WHITE"
+        echo "$YELLOW installing gnupg...$WHITE"
+        apt install gnupg -y
+        echo "$GREEN gnupg installed successfully $WHITE"
     fi
 
 }
@@ -106,23 +109,26 @@ reload_package_database(){
 }
 
 install_mongo_db_community_server(){
-    validate_user
-    echo "$YELLOW installing mongodb...$WHITE"
-    apt install mongodb-org -y &> $LOG_FILE
-    validate_operation $Exit_Status "MongoDB installation is"
+    if command -v mongod &> /dev/null;then
+    echo "$BLUE mongodb is already installed on your machine$WHITE"
+    else
+        
+        validate_user
+        echo "$YELLOW installing mongodb...$WHITE"
+        apt install mongodb-org -y &> $LOG_FILE
+        validate_operation $Exit_Status "MongoDB installation is"
 
-    if command -v mongod;then
-        systemctl enable mongod
-        validate_operation $Exit_Status "Enabling MongoDB is"
-        systemctl start mongod
-        validate_operation $Exit_Status "Mongodb start is"
+        if command -v mongod;then
+            systemctl enable mongod
+            validate_operation $Exit_Status "Enabling MongoDB is"
+            systemctl start mongod
+            validate_operation $Exit_Status "Mongodb start is"
+        fi
     fi
-
-
 }
 
 modify_mongodb_selfBind_IP(){
-    sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongo.conf
+    sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
     validate_operation $Exit_Status "MongoDB Self_Bind modification is"
 }
 
