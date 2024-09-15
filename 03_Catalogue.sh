@@ -283,7 +283,7 @@ startingCatalogue
 
 installingMongodbShell
 
-loadingCatalogueSchema "172.31.36.157"
+loadingCatalogueSchema "172.31.44.30"
 
 
 
