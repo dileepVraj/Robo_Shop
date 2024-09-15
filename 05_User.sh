@@ -1,4 +1,11 @@
 #!/bin/bash
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+WHITE=$(tput setaf 7)
+CYAN=$(tput setaf 6)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
+
 
 validate_user() {
     if [ $ID -eq 0 ]; then
@@ -89,7 +96,7 @@ install_Node.js(){
     echo "$RED curl isn't installed.$WHITE"
     echo "$YELLOW Installing curl... $WHITE"
 
-    apt install curl -y &>> $LOG_FILE
+    apt install curl -y &> /dev/null
 
     validate_operation $? "Curl installation is"
     else
