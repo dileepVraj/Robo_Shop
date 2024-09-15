@@ -37,11 +37,6 @@ BLUE=$(tput setaf 4)
 
 # }
 
-
-
-
-
-
 validate_user() {
     if [ $ID -eq 0 ]; then
         echo "you are root user, good to install services"
@@ -91,7 +86,7 @@ add_user() {
 
 
 
-# Takes 1 argument directory path to be create.
+
 createDirectory() {
     # This function takes 1 arguments, 1.path to directory we want create.
 
@@ -104,10 +99,12 @@ createDirectory() {
 
     # The '-d' is typically used with 'test' command or within a '[' which is a synonym for 'test'.
     # It checks if given path exists and is a directory.
+
+
     if [ -d "/app"  ]; then
         echo "$GREEN directory ""/app" is available $WHITE"
     else
-        echo "$RED directory ""/app" is not available $WHITE"
+        echo "$CYAN directory ""/app" is not available $WHITE"
         # The option '-p' is used to create the parent directory if not exists,which specified in path.
         # Ex: mkdir -p /home/dileep/games this command creates 'games' directory in /home/dileep directory,
         # If /home/dileep is not present it will creates /home/dileep directory without failing the command.
@@ -120,6 +117,8 @@ createDirectory() {
 
 
 install_Node.js(){
+
+
     # updating package list.
     echo "$YELLOW Updading apt packages $WHITE"
     apt update -y &>> /dev/null
@@ -127,15 +126,13 @@ install_Node.js(){
 
     # verify is curl installed.
     if ! command -v curl; then
-    echo "$RED curl isn't installed, do you want to install it? yes/no"
-    read -r response
-        if [ $response = "yes" ];then
-        echo "$YELLOW Installing curl... $WHITE"
-        apt install curl -y &>> $LOG_FILE
-        validate_operation $? "Curl installation is"
-        else
-            echo "$RED Curl installation is failed... $WHITE"
-        fi
+
+    echo "$RED curl isn't installed.$WHITE"
+    echo "$YELLOW Installing curl... $WHITE"
+
+    apt install curl -y &>> $LOG_FILE
+
+    validate_operation $? "Curl installation is"
     else
         echo "$BLUE Curl utility already installed on your machine..$WHITE"
 
@@ -167,8 +164,8 @@ install_Node.js(){
 
 downloadingApplicationCode(){
     # Downloading 'catalogue' application code to /tmp directory.
-    curl -o /tmp/catalogue.zip https://roboshop-builds.s3.amazonaws.com/catalogue.zip
-    validate_operation $? "Application code is downloaded successfully."
+    curl -o /tmp/catalogue.zip https://roboshop-builds.s3.amazonaws.com/catalogue.zip &> /dev/null
+    validate_operation $? "Downloading application code"
 
 }
 
@@ -178,14 +175,12 @@ unzipTheApplicationCode(){
 
     if ! command -v unzip; then
     echo "$RED unzip isn't installed do you want to install yes/no $WHITE"
-    read -r response
-        if [ $response = "yes" ];then
-        echo "$YELLOW installing unzip utility... $WHITE"
-        apt install unzip -y
-        validate_operation $? "unzip utility installation is"
-        else
-            echo "unzip utility already installed"
-        fi
+    echo "$YELLOW installing unzip utility... $WHITE"
+    apt install unzip -y &> /dev/null
+    validate_operation $? "unzip utility installation is"
+    else
+        echo "unzip utility already installed"
+        
     fi
 
     # changing to directory after creation if 'cd' command faile because no directory exists then program will
@@ -195,7 +190,7 @@ unzipTheApplicationCode(){
     echo "$BLUE changed to directory /app $WHITE" 
 
     # unziping the downloaded catalogue.zip file in /app directory.
-    unzip -o /tmp/catalogue.zip
+    unzip -oq /tmp/catalogue.zip
     validate_operation $? "Unziping application code in 'tmp/catalogue.zip is'"
 
 }
@@ -210,11 +205,12 @@ installNPM(){
         # installing npm package manager for nodejs packages.
         echo "$YELLOW installing npm...$WHITE"
         npm install &>> $LOG_FILE
-        validate_operation $? "npm installation is"
+        validate_operation $? "Installing NPM"
 
     fi
     
 }
+
 
 creatingServiceFile(){
     # adding catalogue.service file in /etc/systemd/system/ directory.
@@ -225,16 +221,16 @@ creatingServiceFile(){
 daemonRestart(){
     # Restarting the system daemon.
     systemctl daemon-reload
-    validate_operation $? "daemon reloaded good to go.."
+    validate_operation $? "Reloading daemon"
 
 }
 
 startingCatalogue(){
     # Start catalogue service.
     systemctl enable catalogue
-    validate_operation $? "Catalogue enabled"
+    validate_operation $? "Enabling catalogue"
     systemctl start catalogue
-    validate_operation $? "Catalogue started"
+    validate_operation $? "Starting catalogue"
 
 }
 
@@ -250,8 +246,8 @@ installingMongodbShell(){
         echo "$YELLOW Updating apt packages...$WHITE"
         sudo apt update &>> /dev/null
         echo "$YELLOW installing mongodb_shell...$WHITE"
-        apt install mongodb-mongosh -y &>> $LOG_FILE
-        validate_operation $? "Mongodb Shell installation is successfull"
+        apt install mongodb-mongosh -y &> $LOG_FILE
+        validate_operation $? "Installing MongoDB"
         shellVersion=$(mongosh --version)
         echo " $GREEN Mongodb shell version is $shellVersion $WHITE"
     fi
@@ -261,7 +257,7 @@ installingMongodbShell(){
 loadingCatalogueSchema(){
     # Loading schema to mongodb from catalogue 'ms' 
     mongosh --host $1 </app/schema/catalogue.js &> /dev/null
-    validate_operation $? "Successfully loaded catalogue schema to mongo_db"
+    validate_operation $? "Successfully loaded catalogue schema to mongo_db database"
 
 
 }
@@ -288,7 +284,7 @@ startingCatalogue
 
 installingMongodbShell
 
-loadingCatalogueSchema "172.31.43.64"
+loadingCatalogueSchema "172.31.37.70"
 
 
 
