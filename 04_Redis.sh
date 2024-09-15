@@ -1,68 +1,82 @@
 #!/bin/bash
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+WHITE=$(tput setaf 7)
+CYAN=$(tput setaf 6)
+YELLOW=$(tput setaf 3)
 
-ID=$(id -u)
-LOG_FILE="/tmp/Redis.log"
 
-
-validateUser() {
-    if [ $ID -ne 0 ]; then
-    echo "Sorry you are not a root user, only root user can install services"
+# Redis is used for in-memory data storage(Caching) and allows users to access the data of database over API.
+validateOperation(){
+    if [ $1 -eq 0 ];then
+    echo "$GREEN $2 is successful$WHITE"
     else
-        echo "Welcome to Redis service configuration"
+        echo "$RED $2 is fail$WHITE"
     fi
-    
 }
 
-validateOperation() {
-    if [ $1 -ne 0 ];then
-    echo "Operation $2 failed."
-    exit 1
-    else 
-        echo "Operation $2 success."
-    fi
+updateAptPackage(){
+    #Updating packages.
+    echo "$CYAN updating apt packages $WHITE"
+    apt update -y &> /dev/null
+    validateOperation $? "Updating apt packages"
+    
 }
 
 installRedis(){
-    # Update apt package.
-    apt update -y &>> /dev/null
-
-    # Install redis server.
-    if ! command -v redis-cli; then
-    echo " Redis isn't installed "
-
-    echo "Installing redis...."
-    apt install redis-server -y &>>/dev/null
-    validateOperation $? "Redis installatino is "
+    if command -v redis-server;then
+    echo "$CYAN redis-server is already installed on your machine$WHITE"
     else
-    redisVersion=$(redis-cli --version)
-        echo "Redis already installed and version is: $redisVersion"
+        echo "$CYAN redis-server isn't installed yet$WHITE"
+        echo "$YELLOW installing redis-server$WHITE"
+        apt install redis-server -y &> /dev/null
+        if command -v redis-server;then
+        echo "$GREEN successfully installed redis-server$WHITE"
+        else
+            echo "$RED somehow redis installation is failed $WHITE"
+        fi
     fi
-
-    # Modifying Redis configuration file and changing 127.0.0.0 ::1 to 0.0.0.0.
-    sed -i 's/^bind 127.0.0.1 ::1/bind 0.0.0.0/' /etc/redis/redis.conf
-    validateOperation $? "Modified IP address to 0.0.0.0 is: "
-
-    
-    # Daemon reload.
-    systemctl daemon-reload
-    validateOperation $? "Daemon is"
-
-    # Starting redis.
-    systemctl start redis
-    validateOperation $? "Starting redis is"
-    
-    # Restarting Redis.
-    systemctl restart redis
-    validateOperation $? "Redis restart is "
-
-    # Enabling redis.
-     systemctl enable redis-server
-    validateOperation $? "enabing redis is "
-    
 }
 
-validateUser
+enableRedisServer(){
+    echo "$CYAN Enabling redis-server $WHITE"
+    systemctl enable redis-server
+    validateOperation $? "Enabling redis-server"
+}
+
+startRedisServer(){
+    echo "$CYAN Starting redis-server $WHITE"
+    systemctl start redis-server
+    validateOperation $? "Starting redis-server"
+}
+
+
+changeIpOfRedisServer(){
+    # Usually Redis opens the port only to localhost(127.0.0.1), meaning this service can be accessed by 
+    # the application that is hosted on this server only. However, we need to access this service to be 
+    # accessed by another server, So we need to change the config accordingly.
+
+    echo "$CYAN Modifying default IP: 127.0.0.1 to 0.0.0.0(public).$WHITE"
+    sed -i 's/127.0.0.1/0.0.0.0/g' /etc/redis.conf
+    sed -i 's/127.0.0.1/0.0.0.0/g' /etc/redis/redis.conf
+    validateOperation $? "Modifying Ip to public(0.0.0.0)"
+}
+
+restartRedisServer(){
+
+    echo "$CYAN restarting redis-server $WHITE"
+    systemctl restart redis-server
+    validateOperation $? "restarting redis-server"
+}
+
+updateAptPackage
 installRedis
+enableRedisServer
+startRedisServer
+changeIpOfRedisServer
+restartRedisServer
+
+
 
 
 
