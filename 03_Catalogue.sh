@@ -137,6 +137,8 @@ install_Node.js(){
         else
             echo "$RED Curl installation is failed... $WHITE"
         fi
+    else
+        echo "$BLUE Curl utility already installed on your machine..$WHITE"
 
     fi
 
@@ -144,20 +146,23 @@ install_Node.js(){
     curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &>> $LOG_FILE
     validate_operation $? "NodeSource repository downloaded successfully"
 
-    # Installing Node.js.
-    echo "$YELLOW installing Nodejs...$WHITE"
-    apt install nodejs -y &>> $LOG_FILE
-    validate_operation $? "Node.js installation "
-
-    # Verifying is Node.js installed.
-    NodejsCheck=$(node -v)
-
-    if [ $NodejsCheck = "v18.20.4" ]; then
-    echo "$GREEN Node.js is installed successfully $WHITE"
+    if command -v node &> /dev/null;then
+    echo "$BLUE Nodejs already installed on your machine$WHITE"
     else
-        echo "$RED Failed to install Node.js $WHITE"
-    fi
+        echo "$BLUE Nodejs ins't installed on your machine$WHITE"
+        # Installing Node.js.
+        echo "$YELLOW installing Nodejs...$WHITE"
+        apt install nodejs -y &>> $LOG_FILE
+        validate_operation $? "Node.js installation "
 
+        # Verifying is Node.js installed.
+        NodejsCheck=$(node -v)
+        if [ $NodejsCheck = "v18.20.4" ]; then
+        echo "$GREEN Node.js is installed successfully $WHITE"
+        else
+            echo "$RED Failed to install Node.js $WHITE"
+        fi
+    fi
     
 }
 
@@ -192,10 +197,18 @@ unzipTheApplicationCode(){
 
 
 installNPM(){
-    # installing npm package manager for nodejs packages.
-    echo "$YELLOW installing npm...$WHITE"
-    npm install &>> $LOG_FILE
-    validate_operation $? "npm installation is"
+
+    if command -v npm &> /dev/null; then
+    echo "$BLUE npm already installed on your machine...$WHITE"
+    else
+        echo "$BLUE npm isn't installed yet on your machine$WHITE"
+        # installing npm package manager for nodejs packages.
+        echo "$YELLOW installing npm...$WHITE"
+        npm install &>> $LOG_FILE
+        validate_operation $? "npm installation is"
+
+    fi
+    
 }
 
 creatingServiceFile(){
@@ -221,22 +234,28 @@ startingCatalogue(){
 }
 
 installingMongodbShell(){
-    # Installing shell.
-    wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
-    echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
-    echo "$YELLOW Updating apt packages...$WHITE"
-    sudo apt update &>> /dev/null
-    echo "$YELLOW installing mongodb_shell...$WHITE"
-    apt install mongodb-mongosh -y &>> $LOG_FILE
-    validate_operation $? "Mongodb Shell installation is successfull"
-    shellVersion=$(mongosh --version)
-    echo " $GREEN Mongodb shell version is $shellVersion $WHITE"
+
+    if command -v mongosh &> /dev/null;then
+    echo "$BLUE mongosh already installed on your machine $WHITE"
+    else
+
+        # Installing shell.
+        wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
+        echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+        echo "$YELLOW Updating apt packages...$WHITE"
+        sudo apt update &>> /dev/null
+        echo "$YELLOW installing mongodb_shell...$WHITE"
+        apt install mongodb-mongosh -y &>> $LOG_FILE
+        validate_operation $? "Mongodb Shell installation is successfull"
+        shellVersion=$(mongosh --version)
+        echo " $GREEN Mongodb shell version is $shellVersion $WHITE"
+    fi
 }
 
 # Takes 1 argument (IP address of MONGO_DB instance.)
 loadingCatalogueSchema(){
     # Loading schema to mongodb from catalogue 'ms' 
-    mongosh --host $? </app/schema/catalogue.js &> /dev/null
+    mongosh --host $1 </app/schema/catalogue.js &> /dev/null
     validate_operation $? "Successfully loaded catalogue schema to mongo_db"
 
 
