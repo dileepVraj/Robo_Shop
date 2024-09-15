@@ -226,7 +226,7 @@ settingUpReverseProxy(){
     echo "$GREEN Successfully created roboshop.conf file 😊 $WHITE"
     echo "$CYAN Removing default configuration of Nginx.$WHITE"
     rm -r /etc/nginx/sites-enabled/default
-    validate_operation $? "Removing default config directory is"
+    validateOperation $? "Removing default config directory is"
     else
         echo "$RED Somehow failed to create roboshop.conf file 🤔 $WHITE"
             
