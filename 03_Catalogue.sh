@@ -123,6 +123,7 @@ createDirectory() {
 
 install_Node.js(){
     # updating package list.
+    echo "$YELLOW Updading apt packages $WHITE"
     apt update -y &>> /dev/null
     echo "$GREEN Updated package list $WHITE"
 

@@ -142,7 +142,7 @@ install_Nginx(){
     # appropriate message, that nginx is installed.
 
 
-    if ! command -v nginx &> /dev/null; then
+    if ! command -v nginx &> /dev/null;then
         ehco "$CYAN Nginx isn't installed.$WHITE"
         echo "$YELLOW Installing Nginx ...$WHITE"
         apt install nginx -y &>> $LOG_FILE
