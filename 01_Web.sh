@@ -8,7 +8,7 @@ WHITE=$(tput setaf 7)
 CYAN=$(tput setaf 6)
 YELLOW=$(tput setaf 3)
 
-notes(){
+# notes(){
     # Readme:
 
     # The Web/Frontend is the service in RoboShop to serve the web content over Nginx.
@@ -125,7 +125,7 @@ notes(){
     # later if needed by re-creating the symlink.
     #-----------------------------------------------------------------------------------------------------
 
-}
+# }
 
 validateOperation() {
     # function that two arguments 1. exit code status($?) and operation name and checks if exit code is
