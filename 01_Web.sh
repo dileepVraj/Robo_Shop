@@ -224,6 +224,9 @@ settingUpReverseProxy(){
     cp /home/Robo_Shop/service_files/NginxProxyConfig /etc/nginx/sites-enabled/roboshop.conf
     if [ -f "/etc/nginx/sites-enabled/roboshop.conf" ];then
     echo "$GREEN Successfully created roboshop.conf file 😊 $WHITE"
+    echo "$CYAN Removing default configuration of Nginx.$WHITE"
+    rm -r /etc/nginx/sites-enabled/default
+    validate_operation $? "Removing default config directory is"
     else
         echo "$RED Somehow failed to create roboshop.conf file 🤔 $WHITE"
             
@@ -233,9 +236,7 @@ settingUpReverseProxy(){
         # provided by Nginx. It typically contains a basic configuration for a default server block 
         # (or virtual host) that Nginx uses if no other server blocks match a request.
 
-        echo "$CYAN Removing default configuration of Nginx.$WHITE"
-        rm -r /etc/nginx/sites-enabled/default
-        validate_operation $? "Removing default config directory is"
+        
     fi
 
 }
