@@ -101,15 +101,15 @@ createDirectory() {
     # It checks if given path exists and is a directory.
 
 
-    if [ -d "/app"  ]; then
-        echo "$GREEN directory ""/app" is available $WHITE"
+    if [ -d $1  ]; then
+        echo "$GREEN directory $1 is available $WHITE"
     else
-        echo "$CYAN directory ""/app" is not available $WHITE"
+        echo "$CYAN directory $1 is not available $WHITE"
         # The option '-p' is used to create the parent directory if not exists,which specified in path.
         # Ex: mkdir -p /home/dileep/games this command creates 'games' directory in /home/dileep directory,
         # If /home/dileep is not present it will creates /home/dileep directory without failing the command.
         echo "$YELLOW creating directory $WHITE"
-        mkdir -p "/app"
+        mkdir -p $1
         echo "$GREEN directory /app created successfully.$WHITE"
         
     fi
@@ -268,7 +268,7 @@ install_Node.js
 
 add_user "roboshop"
 
-createDirectory 
+createDirectory "/app"
 
 downloadingApplicationCode
 
