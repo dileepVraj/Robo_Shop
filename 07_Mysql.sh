@@ -1,56 +1,77 @@
 #!/bin/bash
 
-LOG_FILE="/tmp/mysql.log"
+ID=$(id -u)
+LOG_FILE="/tmp/catalogue.log"
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+WHITE=$(tput setaf 7)
+CYAN=$(tput setaf 6)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
 
-validateUser() {
-    if [ $(id -u) -eq 0 ] ; then
-    echo " You are root user good to go"
+#Developer has chosen the database MySQL. Hence, we are trying to install it up and configure it.
+
+
+validateOperation(){
+    if [ $1 -eq 0 ];then
+    echo "$GREEN $2 is successful$WHITE"
     else
-        echo "You are not a root user, wait switching to root user"
-        sudo su -
-        echo " Switched to root user"
+        echo "$RED $2 is fail$WHITE"
     fi
 }
 
-validateOperation() {
-    if [ $1 -eq 0 ]; then
-    echo "'$2' is successfull"
-    else
-        echo "'$2' is falied"
-        exit 1
-    fi
+updateAptPackage(){
+    #Updating packages.
+    echo "$CYAN updating apt packages $WHITE"
+    apt update -y &> /dev/null
+    validateOperation $? "Updating apt packages"
+    
 }
 
+downloadAndInstallMysqlAPTRepo(){
+    # To install MySQL Community Server, you first need to add the MySQL APT repository to your system.
+    wget https://dev.mysql.com/get/mysql-apt-config_0.8.26-1_all.deb
+    validateOperation $? "Downloading & installing  MySql APT repository"
+    echo "Downloaded MySql APT repository package"
+    echo "Installing MySql APT package"
+    dpkg -i mysql-apt-config_0.8.26-1_all.deb
+    echo "Installed MySql APT package"
 
 
-# Validating user.
-validateUser
+}
 
-# CentOS-8 Comes with MySQL 8 Version by default, However our application needs MySQL 5.7. So lets disable MySQL 8 version.
-dnf module disable mysql -y &>> $LOG_FILE
-validateOperation $? "Mysql version 8 is disabled"
+installingMySqlServer(){
 
-# Copying mysql.repo to '/etc/yum.repos.d' directory.
-cp /home/Robo_Shop/repo_files/mysql_repo /etc/yum.repos.d/mysql.repo
-validateOperation $? "Copying of mysql.repo file is:"
+    if command -v mysql-server;then
+    echo "mysql-server is already installed on your machine"
+    else
+        echo "mysql-server isn't installed on your machine"
+        echo "Installing mysql-server..."
+        apt install mysql-server -y &> /dev/null
+        validateOperation $? "Installing mysql-server"
 
-# Installing Mysql server
-dnf install mysql-community-server -y &>> $LOG_FILE
-validateOperation $? "Mysql installation"
+}
 
-# Enabling Mysql
-systemctl enable mysqld
-validateOperation $? "Enabling Mysql"
+secureMysqlInstallation(){
+    echo "Securing mysql installation"
+    mysql_secure_installation
+    validateOperation $? "securing mysql installation"
 
-# Starting MySql
-systemctl start mysqld
-validateOperation $? "MySql started"
+}
 
-# Changing root password in order to start using the database service.
-mysql_secure_installation --set-root-pass RoboShop@1
-validateOperation $? "Successfully changed root password of MySql"
+checkStatus(){
+    systemctl status mysql
+}
 
+loginToMySql(){
+    mysql -u root -p
 
+}
 
-
+updateAptPackage
+downloadAndInstallMysqlAPTRepo
+installingMySqlServer
+secureMysqlInstallation
+checkStatus
+loginToMySql
 
