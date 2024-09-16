@@ -49,6 +49,7 @@ installingMySqlServer(){
         echo "Installing mysql-server..."
         apt install mysql-server -y &> /dev/null
         validateOperation $? "Installing mysql-server"
+    fi
 
 }
 
