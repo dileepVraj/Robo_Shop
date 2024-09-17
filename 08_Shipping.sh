@@ -88,7 +88,7 @@ installMaven(){
 downloadingApplicationCode(){
     # Downloading 'shipping' application code to /tmp directory.
     curl -L -o /tmp/shipping.zip https://roboshop-builds.s3.amazonaws.com/shipping.zip &> /dev/null
-    validate_operation $? "Downloading application code"
+    validateOperation $? "Downloading application code"
 
 }
 
